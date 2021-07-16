@@ -1,7 +1,14 @@
+mod world;
+mod entity;
+mod component;
+mod system;
+
 use std::error::Error;
 
-use super::math::{Rect};
-use super::renderer::primitives::*;
+use self::world::World;
+
+pub use crate::math;
+use crate::renderer::{Renderer};
 
 pub struct FrameData {
     pub delta_time: f64,
@@ -10,18 +17,21 @@ pub struct FrameData {
 }
 
 pub struct Game {
-    window_width: u32,
-    window_height: u32,
+    world: World,
 }
 
-pub fn new(window_width: u32, window_height: u32) -> Result<Game, Box<dyn Error>> {
+impl Game {
 
-    Ok(Game { window_width, window_height })
+    pub fn new() -> Result<Game, Box<dyn Error>> {
+        Ok(Game { world: World::new() })
+    }
+
+    pub fn update(&mut self, data: FrameData, renderer : &mut Renderer) {
+
+        system::mouse_follow(&mut self.world.entities, &data);
+        system::repelled(&mut self.world.entities, &data);
+        system::moving(&mut self.world.entities, &data);
+        system::drawable(&self.world.entities, renderer);
+    }
 }
 
-pub fn update(data: FrameData, renderer : &mut super::renderer::Renderer) {
-    let object = Rect::new(data.cursor_x as f32, data.cursor_y as f32, 10.0, 10.0);
-    //let object = Rect::new(400.0, 300.0, 100.0, 100.);
-
-    draw_rectangle(&object, renderer);
-}

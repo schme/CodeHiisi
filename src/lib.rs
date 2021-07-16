@@ -1,13 +1,17 @@
+extern crate rand;
+
 mod platform;
 mod game;
 mod renderer;
-mod math;
+pub mod math;
 
 use std::error::Error;
 
+use game::Game;
 use platform::Platform;
 use renderer::Renderer;
 
+#[derive(Debug)]
 pub struct Config {
     pub program_name: String,
     pub asset_path: String,
@@ -20,7 +24,7 @@ impl Config {
         let program_name = "RustyRay".to_string();
         let asset_path = "assets".to_string();
         let window_width = 800;
-        let window_height = 600;
+        let window_height = 800;
         Ok(Config { program_name, asset_path, window_width, window_height })
     }
 }
@@ -29,6 +33,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let mut platform = Platform::new(&config.program_name, config.window_width, config.window_height);
     let mut renderer = Renderer::new(&mut platform.window);
+    let mut game = Game::new().unwrap();
 
     let mut frame_stop: f64 = 0.0;
     let mut frame_start: f64 = 0.0;
@@ -49,7 +54,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
         let (cursor_x, cursor_y) = platform.get_cursor_pos();
 
-        game::update(game::FrameData {
+        game.update(game::FrameData {
            delta_time,
            cursor_x,
            cursor_y}, &mut renderer);

@@ -71,6 +71,7 @@ impl Renderer {
 
         let out_color_str = CString::new("out_color").unwrap();
         let position_str = CString::new("position").unwrap();
+        let color_str = CString::new("color").unwrap();
         let mvp_str = CString::new("mvp").unwrap();
 
         unsafe {
@@ -87,15 +88,26 @@ impl Renderer {
 
             // Specify layout
             let pos_attr = gl::GetAttribLocation(buffer.shader_id, position_str.as_ptr());
-            gl::EnableVertexAttribArray(pos_attr as GLuint);
+            let col_attr = gl::GetAttribLocation(buffer.shader_id, color_str.as_ptr());
             gl::VertexAttribPointer(
                 pos_attr as GLuint,
                 2,
                 gl::FLOAT,
                 gl::FALSE as GLboolean,
-                2 * mem::size_of::<GLfloat>() as i32,
+                5 * mem::size_of::<GLfloat>() as i32,
                 ptr::null(),
             );
+            gl::EnableVertexAttribArray(pos_attr as GLuint);
+            gl::VertexAttribPointer(
+                col_attr as GLuint,
+                3,
+                gl::FLOAT,
+                gl::FALSE as GLboolean,
+                5 * mem::size_of::<GLfloat>() as i32,
+                (2 * mem::size_of::<GLfloat>()) as *const GLvoid,
+            );
+            gl::EnableVertexAttribArray(col_attr as GLuint);
+
 
             let mvp = math::array4x4(math::ortho(0.0, window_size.0 as f32, window_size.1 as f32, 0.0, 0.0, 1.0));
 
@@ -118,6 +130,24 @@ impl Renderer {
     fn add_to_buffer(&mut self, data: &mut Vec<f32>) {
         let buff : &mut RenderBuffer = self.buffers.first_mut().unwrap();
         buff.data.append(data);
+    }
+
+    pub fn add_quad(&mut self, quad: (f32, f32, f32, f32), color: (f32, f32, f32)) {
+        let mut v = vec![
+            quad.0, quad.1,
+            color.0, color.1, color.2,
+            quad.0, quad.1 + quad.3,
+            color.0, color.1, color.2,
+            quad.0 + quad.2, quad.1,
+            color.0, color.1, color.2,
+            quad.0, quad.1 + quad.3,
+            color.0, color.1, color.2,
+            quad.0 + quad.2, quad.1 + quad.3,
+            color.0, color.1, color.2,
+            quad.0 + quad.2, quad.1,
+            color.0, color.1, color.2,
+        ];
+        self.add_to_buffer(&mut v);
     }
 }
 
