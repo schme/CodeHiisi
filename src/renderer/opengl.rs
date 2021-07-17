@@ -10,14 +10,17 @@ static VS_SRC: &'static str = "
 #version 410 core
 layout (location = 0) in vec2 position;
 layout (location = 1) in vec3 color;
+layout (location = 2) in vec2 texcoord;
 
 out vec4 vertex_color;
+out vec2 tex_coord;
 
 uniform mat4 mvp;
 
 void main() {
     gl_Position = mvp * vec4(position, 0.0f, 1.0f);
     vertex_color = vec4(color, 1.0f);
+    tex_coord = texcoord;
 }";
 
 
@@ -25,10 +28,13 @@ static FS_SRC: &'static str = "
 #version 410 core
 
 in vec4 vertex_color;
+in vec2 tex_coord;
 out vec4 out_color;
 
+uniform sampler2D a_texture;
+
 void main() {
-    out_color = vertex_color;
+    out_color = texture(a_texture, tex_coord) * vertex_color;
 }";
 
 

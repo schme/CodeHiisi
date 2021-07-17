@@ -117,7 +117,7 @@ CocoaFrameName	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/gl
 CocoaGraphicsSwitching	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    CocoaGraphicsSwitching(bool),$/;"	e	enum:WindowHint
 CocoaMenubar	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    CocoaMenubar(bool),$/;"	e	enum:InitHint
 CocoaRetinaFramebuffer	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    CocoaRetinaFramebuffer(bool),$/;"	e	enum:WindowHint
-Color	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Color(f32, f32, f32),$/;"	e	enum:Component
+Color	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Color(Vector3<f32>),$/;"	e	enum:Component
 Column	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/matrix.rs	/^    type Column = Vector2<S>;$/;"	t	implementation:Matrix2
 Column	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/matrix.rs	/^    type Column = Vector3<S>;$/;"	t	implementation:Matrix3
 Column	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/matrix.rs	/^    type Column = Vector4<S>;$/;"	t	implementation:Matrix4
@@ -517,6 +517,7 @@ MonitorEvent	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw
 MouseButton	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    MouseButton(MouseButton, Action, Modifiers),$/;"	e	enum:WindowEvent
 MouseButton	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^impl MouseButton {$/;"	c
 MouseButton	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^pub enum MouseButton {$/;"	g
+MouseButtonState	C:/Users/schme/koodi/rustyray/src/platform/mod.rs	/^pub struct MouseButtonState {$/;"	s
 MyF32	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/uniform.rs	/^        impl SampleUniform for MyF32 {$/;"	c	function:tests::test_custom_uniform
 MyF32	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/uniform.rs	/^        struct MyF32 {$/;"	s	function:tests::test_custom_uniform
 N	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    N = ffi::KEY_N,$/;"	e	enum:Key
@@ -585,7 +586,7 @@ Point3	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.1
 Point3	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/point.rs	/^impl<S: fmt::Debug> fmt::Debug for Point3<S> {$/;"	c
 Point3	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/point.rs	/^pub struct Point3<S> {$/;"	s
 Pos	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    Pos(i32, i32),$/;"	e	enum:WindowEvent
-Position	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Position(f32, f32),$/;"	e	enum:Component
+Position	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Position(Point2<f32>),$/;"	e	enum:Component
 Press	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    Press = ffi::PRESS,$/;"	e	enum:Action
 PrintScreen	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    PrintScreen = ffi::KEY_PRINT_SCREEN,$/;"	e	enum:Key
 Q	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    Q = ffi::KEY_Q,$/;"	e	enum:Key
@@ -724,7 +725,7 @@ Seed	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/s
 Seed	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/xoshiro256plusplus.rs	/^    type Seed = [u8; 32];$/;"	t	implementation:Xoshiro256PlusPlus
 Semicolon	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    Semicolon = ffi::KEY_SEMICOLON,$/;"	e	enum:Key
 Size	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    Size(i32, i32),$/;"	e	enum:WindowEvent
-Size	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Size(f32, f32),$/;"	e	enum:Component
+Size	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Size(Vector2<f32>),$/;"	e	enum:Component
 Slash	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    Slash = ffi::KEY_SLASH,$/;"	e	enum:Key
 Slice	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/slice.rs	/^impl<'a, T> Distribution<&'a T> for Slice<'a, T> {$/;"	c
 Slice	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/slice.rs	/^impl<'a, T> Slice<'a, T> {$/;"	c
@@ -783,6 +784,7 @@ T	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/s
 T	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    T = ffi::KEY_T,$/;"	e	enum:Key
 T	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/seq/mod.rs	/^impl<T> SliceRandom for [T] {$/;"	c
 Tab	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    Tab = ffi::KEY_TAB,$/;"	e	enum:Key
+Texture	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Texture(Image<u8>),$/;"	e	enum:Component
 ThreadRng	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/thread.rs	/^impl CryptoRng for ThreadRng {}$/;"	c
 ThreadRng	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/thread.rs	/^impl Default for ThreadRng {$/;"	c
 ThreadRng	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/thread.rs	/^impl RngCore for ThreadRng {$/;"	c
@@ -882,7 +884,7 @@ Vector4	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.
 Vector4	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/vector_simd.rs	/^impl SubAssign for Vector4<u32> {$/;"	c
 Vector4	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/vector_simd.rs	/^impl Vector4<f32> {$/;"	c
 VectorSpace	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/structure.rs	/^pub trait VectorSpace: Copy + Clone$/;"	i
-Velocity	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Velocity(f32, f32),$/;"	e	enum:Component
+Velocity	C:/Users/schme/koodi/rustyray/src/game/component.rs	/^    Velocity(Vector2<f32>),$/;"	e	enum:Component
 VersionUnavailable	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    VersionUnavailable = ffi::VERSION_UNAVAILABLE,$/;"	e	enum:Error
 VidMode	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^impl VidMode {$/;"	c
 VidMode	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^impl fmt::Debug for VidMode {$/;"	c
@@ -975,7 +977,8 @@ add_element_wise	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/
 add_element_wise	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/vector_simd.rs	/^    fn add_element_wise(self, rhs: Vector4<f32>) -> Vector4<f32> {$/;"	P	implementation:Vector4
 add_element_wise	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/vector_simd.rs	/^    fn add_element_wise(self, rhs: f32) -> Vector4<f32> {$/;"	P	implementation:Vector4
 add_entity	C:/Users/schme/koodi/rustyray/src/game/world.rs	/^    pub fn add_entity(&mut self, entity : Entity) {$/;"	P	implementation:World
-add_quad	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^    pub fn add_quad(&mut self, quad: (f32, f32, f32, f32), color: (f32, f32, f32)) {$/;"	P	implementation:Renderer
+add_quad	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^    pub fn add_quad(&mut self, position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>) {$/;"	P	implementation:Renderer
+add_texture	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^    pub fn add_texture(&mut self, image: &Image<u8>) {$/;"	P	implementation:Renderer
 add_to_buffer	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^    fn add_to_buffer(&mut self, data: &mut Vec<f32>) {$/;"	P	implementation:Renderer
 alias_method	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/weighted.rs	/^pub mod alias_method {$/;"	n
 all	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/utils.rs	/^    fn all(self) -> bool {$/;"	P	implementation:bool
@@ -1179,7 +1182,6 @@ dot	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0
 dot	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/vector.rs	/^    fn dot(self, other: Vector3<S>) -> S {$/;"	P	implementation:Vector3
 dot	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/vector.rs	/^    fn dot(self, other: Vector4<S>) -> S {$/;"	P	implementation:Vector4
 dot	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/vector.rs	/^pub fn dot<V: InnerSpace>(a: V, b: V) -> V::Scalar$/;"	f
-draw_rectangle	C:/Users/schme/koodi/rustyray/src/renderer/primitives.rs	/^pub fn draw_rectangle(rect : &Rect<f32>, renderer: &mut Renderer ) {$/;"	f
 drawable	C:/Users/schme/koodi/rustyray/src/game/system.rs	/^pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {$/;"	f
 drop	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/callbacks.rs	/^        fn drop(&mut self) {$/;"	P	implementation:unbuffered::UnsetHandlerGuard
 drop	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    fn drop(&mut self) {$/;"	P	implementation:Cursor
@@ -1215,6 +1217,7 @@ far	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0
 far	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/projection.rs	/^    pub far: S,$/;"	m	struct:Perspective
 far	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/projection.rs	/^    pub far: S,$/;"	m	struct:PerspectiveFov
 ffi	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^pub mod ffi;$/;"	n
+file	C:/Users/schme/koodi/rustyray/src/platform/mod.rs	/^pub mod file;$/;"	n
 fill	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rng.rs	/^    fn fill<T: Fill + ?Sized>(&mut self, dest: &mut T) {$/;"	P	interface:Rng
 fill_bytes	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/adapter/read.rs	/^    fn fill_bytes(&mut self, dest: &mut [u8]) {$/;"	P	implementation:ReadRng
 fill_bytes	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/adapter/reseeding.rs	/^    fn fill_bytes(&mut self, dest: &mut [u8]) {$/;"	f
@@ -1385,6 +1388,7 @@ get_key	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41
 get_key_name	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^pub fn get_key_name(key: Option<Key>, scancode: Option<Scancode>) -> Option<String> {$/;"	f
 get_key_scancode	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^pub fn get_key_scancode(key: Option<Key>) -> Option<Scancode> {$/;"	f
 get_mouse_button	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn get_mouse_button(&self, button: MouseButton) -> Action {$/;"	P	implementation:Window
+get_mouse_state	C:/Users/schme/koodi/rustyray/src/platform/mod.rs	/^    pub fn get_mouse_state(&self) -> MouseButtonState {$/;"	P	implementation:Platform
 get_name	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn get_name(&self) -> Option<String> {$/;"	P	implementation:Joystick
 get_name	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn get_name(&self) -> Option<String> {$/;"	P	implementation:Key
 get_name	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn get_name(&self) -> Option<String> {$/;"	P	implementation:Monitor
@@ -1568,6 +1572,7 @@ iconify	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41
 id	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub id: JoystickId,$/;"	m	struct:Joystick
 id	C:/Users/schme/koodi/rustyray/src/game/entity.rs	/^    id: usize,$/;"	m	struct:Entity
 image	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/stb_image-0.2.3/src/lib.rs	/^pub mod image;$/;"	n
+image	C:/Users/schme/koodi/rustyray/src/platform/file/mod.rs	/^pub mod image;$/;"	n
 impl_angle	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/angle.rs	/^macro_rules! impl_angle {$/;"	M
 impl_assignment_operator	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/macros.rs	/^macro_rules! impl_assignment_operator {$/;"	M
 impl_fill	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rng.rs	/^macro_rules! impl_fill {$/;"	M
@@ -1679,6 +1684,7 @@ key_name	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.4
 lanes	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/utils.rs	/^    fn lanes() -> usize {$/;"	P	interface:FloatAsSIMD
 left	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/projection.rs	/^    pub left: S,$/;"	m	struct:Ortho
 left	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/projection.rs	/^    pub left: S,$/;"	m	struct:Perspective
+left	C:/Users/schme/koodi/rustyray/src/platform/mod.rs	/^    pub left: Action,$/;"	m	struct:MouseButtonState
 len	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/structure.rs	/^    fn len() -> usize;$/;"	P	interface:Array
 len	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/seq/index.rs	/^    pub fn len(&self) -> usize {$/;"	P	implementation:IndexVec
 len	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/seq/mod.rs	/^    fn len(&self) -> usize {$/;"	P	implementation:SliceChooseIter
@@ -1739,11 +1745,13 @@ max_relative	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/appr
 max_ulps	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.4.0/src/lib.rs	/^    pub fn max_ulps(self, max_ulps: u32) -> Ulps<A, B> {$/;"	f
 max_ulps	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.4.0/src/lib.rs	/^    pub max_ulps: u32,$/;"	m	struct:Ulps
 maximize	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn maximize(&mut self) {$/;"	P	implementation:Window
+middle	C:/Users/schme/koodi/rustyray/src/platform/mod.rs	/^    pub middle: Action,$/;"	m	struct:MouseButtonState
 mint_conversions	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/matrix.rs	/^macro_rules! mint_conversions {$/;"	M
 mock	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/mod.rs	/^pub mod mock; \/\/ Public so we don't export `StepRng` directly, making it a bit$/;"	n
 mode	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/uniform.rs	/^    mode: UniformDurationMode,$/;"	m	struct:UniformDuration
 monitor	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/callbacks.rs	/^pub mod monitor {$/;"	n
 mouse_follow	C:/Users/schme/koodi/rustyray/src/game/system.rs	/^pub fn mouse_follow(entities : &mut Vec<Entity>, frame_data : &super::FrameData ) {$/;"	f
+mouse_state	C:/Users/schme/koodi/rustyray/src/game/mod.rs	/^    pub mouse_state: MouseButtonState,$/;"	m	struct:FrameData
 move_last	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/seq/mod.rs	/^        fn move_last(slice: &mut [usize], pos: usize) {$/;"	f	function:test::test_shuffle
 moving	C:/Users/schme/koodi/rustyray/src/game/system.rs	/^pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {$/;"	f
 mul	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/transform.rs	/^    fn mul(self, rhs: Decomposed<P::Diff, R>) -> Self::Output {$/;"	f
@@ -1862,7 +1870,6 @@ post_empty_event	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/
 prelude	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/lib.rs	/^pub mod prelude;$/;"	n
 prelude	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/lib.rs	/^pub mod prelude;$/;"	n
 primitives	C:/Users/schme/koodi/rustyray/src/math/mod.rs	/^pub mod primitives;$/;"	n
-primitives	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^pub mod primitives;$/;"	n
 product	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/quaternion.rs	/^    fn product<I: Iterator<Item = &'a Quaternion<S>>>(iter: I) -> Quaternion<S> {$/;"	P	implementation:Quaternion
 product	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/quaternion.rs	/^    fn product<I: Iterator<Item = Quaternion<S>>>(iter: I) -> Quaternion<S> {$/;"	P	implementation:Quaternion
 product	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/rotation.rs	/^    fn product<I: Iterator<Item = &'a Basis2<S>>>(iter: I) -> Basis2<S> {$/;"	P	implementation:Basis2
@@ -1936,6 +1943,7 @@ resize	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^pub fn resize(width :
 restore	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn restore(&mut self) {$/;"	P	implementation:Window
 right	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/projection.rs	/^    pub right: S,$/;"	m	struct:Ortho
 right	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/projection.rs	/^    pub right: S,$/;"	m	struct:Perspective
+right	C:/Users/schme/koodi/rustyray/src/platform/mod.rs	/^    pub right: Action,$/;"	m	struct:MouseButtonState
 rng	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/distribution.rs	/^    rng: R,$/;"	m	struct:DistIter
 rng	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/lib.rs	/^    pub fn rng(seed: u64) -> impl RngCore {$/;"	f	module:test
 rng	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/lib.rs	/^mod rng;$/;"	n
@@ -2059,6 +2067,7 @@ set_swap_interval	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823
 set_time	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn set_time(&mut self, time: f64) {$/;"	P	implementation:Glfw
 set_title	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn set_title(&mut self, title: &str) {$/;"	P	implementation:Window
 set_window_callback	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^macro_rules! set_window_callback {$/;"	M
+setup	C:/Users/schme/koodi/rustyray/src/platform/file/image.rs	/^pub fn setup() {$/;"	f
 shader_id	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^    shader_id : u32,$/;"	m	struct:RenderBuffer
 should_close	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    fn should_close(&self) -> bool {$/;"	P	interface:Context
 should_close	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/glfw-0.41.0/src/lib.rs	/^    pub fn should_close(&self) -> bool {$/;"	P	implementation:Window
@@ -2325,6 +2334,7 @@ tests	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/
 tests	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/xoshiro128plusplus.rs	/^mod tests {$/;"	n
 tests	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/xoshiro256plusplus.rs	/^mod tests {$/;"	n
 tests	C:/Users/schme/koodi/rustyray/src/lib.rs	/^mod tests {$/;"	n
+texture_id	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^    texture_id : u32,$/;"	m	struct:Renderer
 thread	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/mod.rs	/^#[cfg(all(feature = "std", feature = "std_rng"))] pub(crate) mod thread;$/;"	n
 thread_rng	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/thread.rs	/^pub fn thread_rng() -> ThreadRng {$/;"	f
 threshold	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/adapter/reseeding.rs	/^    threshold: i64,$/;"	m	struct:ReseedingCore

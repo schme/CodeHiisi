@@ -1,9 +1,11 @@
 pub extern crate glfw;
 
+pub mod file;
+
 use std::str;
 use super::renderer;
 
-use self::glfw::{Action, Key};
+pub use self::glfw::{Action, Key};
 
 pub struct Platform
 {
@@ -14,6 +16,12 @@ pub struct Platform
 
     cursor_x: f64,
     cursor_y: f64,
+}
+
+pub struct MouseButtonState {
+    pub left: Action,
+    pub right: Action,
+    pub middle: Action,
 }
 
 pub enum PlatformEvents {
@@ -37,6 +45,8 @@ impl Platform {
         window.set_mouse_button_polling(true);
         window.set_cursor_pos_polling(true);
 
+        file::image::setup();
+
         Platform { window, events, should_close: false, cursor_x: 0.0, cursor_y: 0.0 }
     }
 
@@ -48,7 +58,6 @@ impl Platform {
         self.should_close
     }
 
-    // TODO: Collect received events, and pass them a long
     pub fn handle_events(&mut self) {
         // Poll for and process events
         for (_, event) in glfw::flush_messages(&self.events) {
@@ -77,6 +86,13 @@ impl Platform {
 
     pub fn get_cursor_pos(&self) -> (f64, f64) {
         (self.cursor_x, self.cursor_y)
+    }
+
+    pub fn get_mouse_state(&self) -> MouseButtonState {
+        let left = self.window.get_mouse_button(glfw::MouseButtonLeft);
+        let right = self.window.get_mouse_button(glfw::MouseButtonRight);
+        let middle = self.window.get_mouse_button(glfw::MouseButtonMiddle);
+        MouseButtonState{ left, right, middle }
     }
 
     fn resize(&self, _window_width : i32, _window_height : i32) {

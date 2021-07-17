@@ -9,11 +9,13 @@ use self::world::World;
 
 pub use crate::math;
 use crate::renderer::{Renderer};
+use crate::platform::{MouseButtonState};
 
 pub struct FrameData {
     pub delta_time: f64,
     pub cursor_x: f64,
     pub cursor_y: f64,
+    pub mouse_state: MouseButtonState,
 }
 
 pub struct Game {

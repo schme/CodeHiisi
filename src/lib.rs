@@ -53,11 +53,16 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         platform.handle_events();
 
         let (cursor_x, cursor_y) = platform.get_cursor_pos();
+        let mouse_state = platform.get_mouse_state();
 
-        game.update(game::FrameData {
-           delta_time,
-           cursor_x,
-           cursor_y}, &mut renderer);
+        let frame_data = game::FrameData {
+            delta_time,
+            cursor_x,
+            cursor_y,
+            mouse_state,
+        };
+
+        game.update(frame_data, &mut renderer);
 
         renderer.render(&mut platform.window);
 
