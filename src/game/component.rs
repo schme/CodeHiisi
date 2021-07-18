@@ -1,5 +1,6 @@
 use math::{Vector2, Point2, Vector3};
 use platform::file::image::Image;
+use renderer::texture::{Texture};
 
 //#[derive(Debug)]
 pub enum Component {
@@ -7,7 +8,7 @@ pub enum Component {
     Velocity(Vector2<f32>),
     Size(Vector2<f32>),
     Color(Vector3<f32>),
-    Texture(Image<u8>),
+    Texture(String),
     FollowMouse,
     Drawable,
     Repelled,

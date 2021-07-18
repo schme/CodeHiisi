@@ -146,15 +146,15 @@ pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
                 Component::Color(c) => {
                     color = *c;
                 }
-                Component::Texture(img) => {
-                    texture = Some(img);
+                Component::Texture(txtr) => {
+                    texture = Some(txtr);
                 }
                 _ => {}
             }
         }
         if has_drawable {
-            if let Some(img) = texture {
-                renderer.add_texture(img);
+            if let Some(txtr) = texture {
+                renderer.use_texture(txtr);
             }
             renderer.add_quad(position, size, color);
         }

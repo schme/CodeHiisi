@@ -1,13 +1,17 @@
 extern crate gl;
+pub mod texture;
+pub mod material;
 
 use self::gl::types::*;
 use std::ffi::CString;
 use std::mem;
 use std::ptr;
-use super::math::{self, Point2, Vector2, Vector3};
+use std::path::Path;
 
+use super::math::{self, Point2, Vector2, Vector3};
 use platform::glfw::{Context};
 use platform::file::image::Image;
+use self::texture::{Texture, TextureStorage};
 
 mod opengl;
 
@@ -18,10 +22,9 @@ struct RenderBuffer {
     shader_id : u32,
 }
 
-#[derive(Debug)]
 pub struct Renderer {
     buffers : Vec<RenderBuffer>,
-    texture_id : u32,
+    textures : TextureStorage,
     vao_id : u32,
 }
 
@@ -45,19 +48,11 @@ impl Renderer {
             gl::GenVertexArrays(1, &mut vao);
             gl::BindVertexArray(vao);
 
-            gl::GenTextures(1, &mut txtr_id);
             gl::ActiveTexture(gl::TEXTURE0);
-            gl::BindTexture(gl::TEXTURE_2D, txtr_id);
-
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::REPEAT as i32); 
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::REPEAT as i32); 
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32); 
-            gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32); 
-
             gl::Enable(gl::BLEND);
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
         }
-        let mut renderer = Renderer { buffers: Vec::new(), texture_id: txtr_id, vao_id: vao};
+        let mut renderer = Renderer { buffers: Vec::new(), textures: TextureStorage::new(), vao_id: vao};
         println!("New renderer for {:?}", window);
         renderer.new_render_buffer(program);
         renderer
@@ -140,7 +135,6 @@ impl Renderer {
 
             let mvp_attr = gl::GetUniformLocation(buffer.shader_id, mvp_str.as_ptr());
             gl::UniformMatrix4fv(mvp_attr, 1, gl::FALSE, mvp.as_ptr() as *const f32);
-            let txtr_attr = gl::GetUniformLocation(buffer.shader_id, txtr_str.as_ptr());
 
             gl::DrawArrays(gl::TRIANGLES, 0, buffer.data.len() as i32);
         }
@@ -160,11 +154,15 @@ impl Renderer {
         buff.data.append(data);
     }
 
-    pub fn add_texture(&mut self, image: &Image<u8>) {
-        unsafe {
-            gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGBA as i32,
-                image.width as i32, image.height as i32, 0, gl::RGBA,
-                gl::UNSIGNED_BYTE, image.data.as_ptr() as *const GLvoid);
+    pub fn load_textures<P: AsRef<Path>>(&mut self, path: P) {
+        self.textures.load_textures(path);
+    }
+
+    pub fn use_texture(&mut self, texture_name: &str) {
+        if let Some(texture) = self.textures.get_texture(texture_name) {
+            unsafe {
+                gl::BindTexture(gl::TEXTURE_2D, texture.id);
+            }
         }
     }
 
@@ -191,6 +189,21 @@ impl Renderer {
         ];
         self.add_to_buffer(&mut v);
     }
+
+}
+
+pub fn use_texture_by_id(texture_id: u32) {
+    unsafe {
+        gl::BindTexture(gl::TEXTURE_2D, texture_id);
+    }
+}
+
+pub fn gen_texture() -> u32 {
+    let mut texture_id = 0;
+    unsafe {
+        gl::GenTextures(1, &mut texture_id);
+    }
+    texture_id
 }
 
 pub fn resize(width : i32, height : i32) {
