@@ -1,6 +1,4 @@
 use math::{Vector2, Point2, Vector3};
-use platform::file::image::Image;
-use renderer::texture::{Texture};
 
 //#[derive(Debug)]
 pub enum Component {

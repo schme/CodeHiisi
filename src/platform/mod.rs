@@ -24,10 +24,6 @@ pub struct MouseButtonState {
     pub middle: Action,
 }
 
-pub enum PlatformEvents {
-    WindowResize(i32, i32),
-}
-
 impl Platform {
 
     pub fn new(title: &str, width: u32, height: u32) -> Platform {
@@ -97,10 +93,7 @@ impl Platform {
 
     fn resize(&self, _window_width : i32, _window_height : i32) {
         let (width, height) = self.window.get_framebuffer_size();
-        renderer::resize(width, height);
-    }
-
-    fn _cleanup(&mut self) {
+        renderer::resize_viewport(width, height);
     }
 }
 

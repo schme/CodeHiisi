@@ -5,7 +5,7 @@ use super::component::{Component};
 static ENTITY_ID_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
 pub struct Entity {
-    id: usize,
+    pub id: usize,
     pub components: Vec<Component>,
 }
 

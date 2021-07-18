@@ -23,12 +23,22 @@ impl TextureStorage {
         }
     }
 
+    pub fn get_white_id(&self) -> u32 {
+        self.data.get("white.png").unwrap().id
+    }
+
     pub fn get_texture(&self, texture_name: &str) -> Option<&Texture> {
         self.data.get(texture_name)
     }
 
-    pub fn new_texture(&mut self, path: &Path) {
+    pub fn get_texture_id(&self, texture_name: &str) -> Option<u32> {
+        if let Some(texture) = self.data.get(texture_name) {
+            return Some(texture.id);
+        }
+        None
+    }
 
+    pub fn new_texture(&mut self, path: &Path) {
         let texture_name = String::from(path.file_name().unwrap().to_str().unwrap());
 
         let txtr = image::load(path);
@@ -40,6 +50,7 @@ impl TextureStorage {
                     id: renderer::gen_texture(),
                     image: img,
                 };
+                println!("name: {}, id: {}", texture_name, texture.id);
                 unsafe {
                     gl::BindTexture(gl::TEXTURE_2D, texture.id);
 
@@ -48,15 +59,19 @@ impl TextureStorage {
                     gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32); 
                     gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32); 
 
-                    gl::TexImage2D(gl::TEXTURE_2D, 0, gl::RGBA as i32,
-                        texture.image.width as i32, texture.image.height as i32, 0, gl::RGBA,
+                    let mode = if texture.image.depth == 4 { gl::RGBA } else { gl::RGB };
+                    gl::TexImage2D(gl::TEXTURE_2D, 0, mode as i32,
+                        texture.image.width as i32, texture.image.height as i32, 0, mode,
                         gl::UNSIGNED_BYTE, texture.image.data.as_ptr() as *const GLvoid);
+
+                    gl::BindTexture(gl::TEXTURE_2D, 0);
                 }
                 self.data.insert(texture_name, texture);
             },
             LoadResult::ImageF32(img) => {
                 println!("ImageF32 found at {:?}:", path);
                 println!("{}, {}, {}", img.width, img.height, img.depth);
+                println!("Discarded!");
             },
             LoadResult::Error(s) => {
                 println!("Failed to load image at {:?}: {}", path, s);
@@ -69,7 +84,10 @@ impl TextureStorage {
             let entry = entry?;
             let path = entry.path();
             if path.is_dir() {
-                self.load_textures(path);
+                match self.load_textures(path) {
+                    Err(s) => println!("Failed to load textures: {}", s),
+                    _ => {},
+                }
             }
             else {
                 self.new_texture(&path);

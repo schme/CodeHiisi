@@ -3,7 +3,7 @@ use super::component::{Component};
 
 use super::math;
 use super::math::{Point2, Vector2, Vector3};
-use super::math::{MetricSpace, InnerSpace};
+use super::math::{MetricSpace};
 use crate::renderer::{Renderer};
 use crate::platform::Action;
 
@@ -31,8 +31,8 @@ pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
 
             if let Component::Position(pos) = prev_position {
                 if let Component::Velocity(vel) = velocity {
-                    entity.components[position_component_indx] =
-                        Component::Position(Point2{x: pos.x + vel.x, y: pos.y + vel.y});
+                    let new_point = pos + vel * frame_data.delta_time as f32;
+                    entity.components[position_component_indx] = Component::Position(new_point);
                 }
             }
         }
@@ -104,13 +104,13 @@ pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
                     match frame_data.mouse_state.left {
                         Action::Press => {
                             if pos.distance2(mouse_pos) < attract_radius2 {
-                                let new_vel = - dir / 100.0;
+                                let new_vel = - dir / 5.0;
                                 entity.components[velocity_component_indx] = Component::Velocity(new_vel);
                             }
                         }
                         Action::Release => {
                             if pos.distance2(mouse_pos) < repel_radius2 {
-                                let new_vel = vel + (2.0 / dir);
+                                let new_vel = vel + dir;
                                 entity.components[velocity_component_indx] = Component::Velocity(new_vel);
                             }
                         }
@@ -125,7 +125,6 @@ pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
 pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
     for entity in entities {
 
-        let invalid_indx = entity.components.len();
         let mut position = Point2{x: 0.0, y: 0.0};
         let mut size = Vector2{x: 0.0, y: 0.0};
         let mut color = Vector3{x: 1.0, y: 1.0, z: 1.0};
@@ -139,24 +138,28 @@ pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
                 },
                 Component::Position(pos) => {
                     position = *pos;
-                }
+                },
                 Component::Size(s) => {
                     size = *s;
-                }
+                },
                 Component::Color(c) => {
                     color = *c;
-                }
+                },
                 Component::Texture(txtr) => {
                     texture = Some(txtr);
-                }
+                },
                 _ => {}
             }
         }
         if has_drawable {
+            let mut texture_id = 0;
             if let Some(txtr) = texture {
-                renderer.use_texture(txtr);
+                texture_id = renderer.get_texture_id(txtr);
             }
-            renderer.add_quad(position, size, color);
+            else {
+                println!("Couldn't find texture for drawable: {}", entity.id);
+            }
+            renderer.add_quad(position, size, color, texture_id);
         }
     }
 }

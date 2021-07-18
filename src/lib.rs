@@ -34,9 +34,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let mut platform = Platform::new(&config.program_name, config.window_width, config.window_height);
     let mut renderer = Renderer::new(&mut platform.window);
-    let mut game = Game::new().unwrap();
-
     renderer.load_textures(Path::new(&config.asset_path).join("textures"));
+    let mut game = Game::new()?;
 
     let mut frame_stop: f64 = 0.0;
     let mut frame_start: f64 = 0.0;

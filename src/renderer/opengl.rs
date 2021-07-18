@@ -117,3 +117,24 @@ fn link_program(vs: GLuint, fs: GLuint) -> GLuint {
         program
     }
 }
+
+pub fn bind_texture_by_id(texture_id: u32) {
+    unsafe {
+        gl::BindTexture(gl::TEXTURE_2D, texture_id);
+    }
+}
+
+pub fn gen_texture() -> u32 {
+    let mut texture_id = 0;
+    unsafe {
+        gl::GenTextures(1, &mut texture_id);
+    }
+    texture_id
+}
+
+pub fn resize_viewport(width : i32, height : i32) {
+    unsafe {
+        gl::Viewport(0, 0, width, height);
+    }
+    println!("Resize to {},{}", width, height);
+}
