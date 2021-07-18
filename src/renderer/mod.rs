@@ -108,20 +108,12 @@ impl Renderer {
             let mvp_attr = gl::GetUniformLocation(buffer.shader_id, mvp_str.as_ptr());
             gl::UniformMatrix4fv(mvp_attr, 1, gl::FALSE, mvp.as_ptr() as *const f32);
 
-            static mut first: bool = true;
             gl::BindVertexArray(vao_id);
             for batch in &buffer.batch_data {
                 gl::ActiveTexture(gl::TEXTURE0);
-                gl::BindTexture(gl::TEXTURE_2D, batch.texture_id);
-                //bind_texture_by_id(batch.texture_id);
+                bind_texture_by_id(batch.texture_id);
                 gl::DrawArrays(gl::TRIANGLES, batch.start as i32, batch.count as i32);
-                if first {
-                    println!("Batch texture_id: {}, start: {}, count: {}", batch.texture_id, batch.start, batch.count);
-                }
-                gl::BindTexture(gl::TEXTURE_2D, 0);
             }
-            first = false;
-            gl::BindVertexArray(0);
         }
     }
 

@@ -1233,7 +1233,6 @@ fill_bytes	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0
 fill_bytes	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/xoshiro128plusplus.rs	/^    fn fill_bytes(&mut self, dest: &mut [u8]) {$/;"	P	implementation:Xoshiro128PlusPlus
 fill_bytes	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/rngs/xoshiro256plusplus.rs	/^    fn fill_bytes(&mut self, dest: &mut [u8]) {$/;"	P	implementation:Xoshiro256PlusPlus
 finite_mask	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/utils.rs	/^    fn finite_mask(self) -> Self::Mask;$/;"	P	interface:FloatSIMDUtils
-first	C:/Users/schme/koodi/rustyray/src/renderer/mod.rs	/^            static mut first: bool = true;$/;"	v	method:Renderer::render_buffer
 fixed_array_conversions	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/cgmath-0.18.0/src/matrix.rs	/^macro_rules! fixed_array_conversions {$/;"	M
 float	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/mod.rs	/^mod float;$/;"	n
 float_impls	C:/Users/schme/.cargo/registry/src/github.com-1ecc6299db9ec823/rand-0.8.4/src/distributions/float.rs	/^macro_rules! float_impls {$/;"	M
