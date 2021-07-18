@@ -157,7 +157,7 @@ pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
                 texture_id = renderer.get_texture_id(txtr);
             }
             else {
-                println!("Couldn't find texture for drawable: {}", entity.id);
+                texture_id = renderer.get_white_id();
             }
             renderer.add_quad(position, size, color, texture_id);
         }

@@ -17,7 +17,7 @@ impl World {
         entity.add_component(Component::Position(Point2{x: 0.0, y: 0.0}));
         entity.add_component(Component::Size(Vector2{x: 20.0, y: 20.0}));
         entity.add_component(Component::Color(Vector3{x: 1.0, y: 0.0, z: 1.0}));
-        //entity.add_component(Component::Texture("white.png".to_string()));
+        entity.add_component(Component::Texture("kivi.png".to_string()));
         entity.add_component(Component::FollowMouse);
         entity.add_component(Component::Drawable);
         world.add_entity(entity);
@@ -30,7 +30,7 @@ impl World {
         entity.add_component(Component::Drawable);
         world.add_entity(entity);
 
-        for _n in 1..10 {
+        for _n in 1..5000 {
             let mut entity = Entity::new();
             entity.add_component(Component::Position(Point2{x: rng.gen_range(0.0..800.0), y: rng.gen_range(0.0..800.0)}));
             entity.add_component(Component::Velocity(Vector2{x: rng.gen_range(-10.0..10.0), y: rng.gen_range(-10.0..10.0)}));
