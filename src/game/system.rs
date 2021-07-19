@@ -42,10 +42,11 @@ pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
 pub fn mouse_follow(entities : &mut Vec<Entity>, frame_data : &super::FrameData ) {
     for entity in entities {
 
-        let updated_position = Component::Position(Point2{x: frame_data.cursor_x as f32, y: frame_data.cursor_y as f32});
+        let mouse_pos = Point2{x: frame_data.cursor_x as f32, y: frame_data.cursor_y as f32};
         let invalid_indx = entity.components.len();
         let mut position_component_indx = invalid_indx;
         let mut has_follow_mouse = false;
+        let mut size = Vector2{x: 0.0, y: 0.0};
 
         for (i, component) in entity.components.iter().enumerate() {
             match component {
@@ -55,11 +56,14 @@ pub fn mouse_follow(entities : &mut Vec<Entity>, frame_data : &super::FrameData 
                 Component::Position(_) => {
                     position_component_indx = i;
                 }
+                Component::Size(s) => {
+                    size = *s;
+                }
                 _ => {}
             }
         }
         if has_follow_mouse && position_component_indx != invalid_indx {
-            entity.components[position_component_indx] = updated_position;
+            entity.components[position_component_indx] = Component::Position(mouse_pos - size * 0.5);
         }
     }
 }

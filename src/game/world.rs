@@ -15,7 +15,7 @@ impl World {
 
         let mut entity = Entity::new();
         entity.add_component(Component::Position(Point2{x: 0.0, y: 0.0}));
-        entity.add_component(Component::Size(Vector2{x: 20.0, y: 20.0}));
+        entity.add_component(Component::Size(Vector2{x: 10.0, y: 10.0}));
         entity.add_component(Component::Color(Vector3{x: 1.0, y: 0.0, z: 1.0}));
         entity.add_component(Component::FollowMouse);
         entity.add_component(Component::Drawable);
