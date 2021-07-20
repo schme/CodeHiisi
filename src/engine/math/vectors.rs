@@ -1,5 +1,7 @@
-use std::ops::{Add};
-use std::marker::{Copy};
+use std::{
+    ops::{Add},
+    marker::{Copy},
+};
 
 #[derive(Debug)]
 pub struct V2<T: Add> {

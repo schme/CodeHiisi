@@ -1,13 +1,15 @@
-use super::{
-    entity::{Entity},
-    component::{Component},
+use {
+    game::{
+        entity::{Entity},
+        component::{Component},
+    },
+    engine::{
+        math::{self,Point2, Vector2, Vector3, MetricSpace},
+        renderer::{Renderer},
+        platform::Action,
+    },
 };
 
-use crate::engine::{
-    math::{self,Point2, Vector2, Vector3, MetricSpace},
-    renderer::{Renderer},
-    platform::Action,
-};
 
 pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     for entity in entities {

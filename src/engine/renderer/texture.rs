@@ -1,10 +1,16 @@
-use std::path::Path;
-use std::collections::HashMap;
-use std::{fs, io};
-use super::gl::types::*;
+use {
+    std::{
+        fs, io,
+        path::Path,
+        collections::HashMap,
+    },
+    renderer::gl::types::*,
+    platform::file::image::{
+        self, LoadResult
+    },
+    renderer,
+};
 
-use crate::platform::file::image::{self, LoadResult};
-use crate::renderer;
 
 pub struct TextureStorage {
     pub data: HashMap<String, Texture>,
