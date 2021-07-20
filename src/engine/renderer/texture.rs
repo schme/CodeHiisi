@@ -27,10 +27,6 @@ impl TextureStorage {
         self.data.get("white.png").unwrap().id
     }
 
-    pub fn get_texture(&self, texture_name: &str) -> Option<&Texture> {
-        self.data.get(texture_name)
-    }
-
     pub fn get_texture_id(&self, texture_name: &str) -> Option<u32> {
         if let Some(texture) = self.data.get(texture_name) {
             return Some(texture.id);

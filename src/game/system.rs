@@ -1,11 +1,13 @@
-use super::entity::{Entity};
-use super::component::{Component};
+use super::{
+    entity::{Entity},
+    component::{Component},
+};
 
-use super::math;
-use super::math::{Point2, Vector2, Vector3};
-use super::math::{MetricSpace};
-use crate::renderer::{Renderer};
-use crate::platform::Action;
+use crate::engine::{
+    math::{self,Point2, Vector2, Vector3, MetricSpace},
+    renderer::{Renderer},
+    platform::Action,
+};
 
 pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     for entity in entities {
@@ -156,14 +158,14 @@ pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
             }
         }
         if has_drawable {
-            let mut texture_id = 0;
-            if let Some(txtr) = texture {
-                texture_id = renderer.get_texture_id(txtr);
-            }
-            else {
-                texture_id = renderer.get_white_id();
-            }
-            renderer.add_quad(position, size, color, texture_id);
+            renderer.add_quad(position, size, color, {
+                if let Some(txtr) = texture {
+                    renderer.get_texture_id(txtr)
+                }
+                else {
+                    renderer.get_white_id()
+                }
+            });
         }
     }
 }

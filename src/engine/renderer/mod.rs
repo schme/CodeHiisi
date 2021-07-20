@@ -1,22 +1,26 @@
 extern crate gl;
+
 pub mod texture;
-pub mod material;
+mod opengl;
 
-use self::gl::types::*;
-use std::ffi::CString;
-use std::mem;
-use std::ptr;
-use std::path::Path;
+use std::{
+    mem, ptr,
+    path::Path,
+    ffi::CString,
+};
 
-use super::math::{self, Point2, Vector2, Vector3};
-use platform::glfw::{Context};
-use self::texture::{TextureStorage};
+use engine::{
+    math::{self, Point2, Vector2, Vector3},
+    platform::glfw::{Context},
+};
 
-use self::opengl::*;
+use self::{
+    gl::types::*,
+    opengl::*,
+    texture::{TextureStorage},
+};
 
 pub use self::opengl::{resize_viewport};
-
-mod opengl;
 
 #[derive(Debug)]
 struct RenderBatch {

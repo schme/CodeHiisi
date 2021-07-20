@@ -3,8 +3,7 @@ pub extern crate glfw;
 pub mod file;
 
 use std::str;
-use super::renderer;
-
+use engine::renderer;
 pub use self::glfw::{Action, Key};
 
 pub struct Platform

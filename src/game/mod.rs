@@ -5,11 +5,12 @@ mod system;
 
 use std::error::Error;
 
-use self::world::World;
+use engine::{
+    renderer::{Renderer},
+    platform::{MouseButtonState},
+};
 
-pub use crate::math;
-use crate::renderer::{Renderer};
-use crate::platform::{MouseButtonState};
+use self::world::World;
 
 pub struct FrameData {
     pub delta_time: f64,

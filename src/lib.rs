@@ -1,16 +1,18 @@
 extern crate rand;
 
-mod platform;
+mod engine;
 mod game;
-mod renderer;
-pub mod math;
 
-use std::error::Error;
-use std::path::Path;
+use std::{
+    error::Error,
+    path::Path,
+};
 
-use game::Game;
+use engine::*;
 use platform::Platform;
 use renderer::Renderer;
+
+use game::Game;
 
 #[derive(Debug)]
 pub struct Config {
