@@ -9,4 +9,5 @@ rand = "*"
 glfw = "*"
 gl = "*"
 stb_image = "*"
+hibitset = "*"
 cgmath = { version = "*", features = ["swizzle"] }

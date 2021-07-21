@@ -22,7 +22,7 @@ pub struct Texture {
 }
 
 impl TextureStorage {
-    pub fn new() -> TextureStorage {
+    pub fn new() -> Self {
 
         TextureStorage {
             data: HashMap::new(),
