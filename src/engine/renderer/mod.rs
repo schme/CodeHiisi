@@ -185,9 +185,8 @@ impl Renderer {
     }
 
     pub fn load_textures<P: AsRef<Path>>(&mut self, path: P) {
-        match self.textures.load_textures(path) {
-            Err(s) => println!("Failed to load textures: {}", s),
-            _ => {},
+        if let Err(s) = self.textures.load_textures(path) {
+            println!("Failed to load textures: {}", s);
         }
     }
 

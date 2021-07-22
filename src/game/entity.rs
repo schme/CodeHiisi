@@ -1,12 +1,12 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use super::component::{Component};
+use super::component::{OldComponent};
 
 static ENTITY_ID_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
 pub struct Entity {
     pub id: usize,
-    pub components: Vec<Component>,
+    pub components: Vec<OldComponent>,
 }
 
 impl Entity {
@@ -15,7 +15,7 @@ impl Entity {
         Entity {id, components: Vec::new()}
     }
 
-    pub fn add_component(&mut self, component: Component) {
+    pub fn add_component(&mut self, component: OldComponent) {
         self.components.push(component);
     }
 }

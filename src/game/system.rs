@@ -1,15 +1,30 @@
 use {
     game::{
         entity::{Entity},
-        component::{Component},
+        component::{self, OldComponent},
     },
     engine::{
+        ecs::{
+            system::System,
+            storage::UncheckedStorage,
+        },
         math::{self,Point2, Vector2, Vector3, MetricSpace},
         renderer::{Renderer},
         platform::Action,
     },
 };
 
+//struct Moving;
+//struct MovingData {
+    //frame_data: &super::FrameData,
+    //position: &mut UncheckedStorage<Position>,
+    //velocity: &UncheckedStorage<Velocity>,
+//}
+
+//impl System for Moving {
+    //pub fn run(&mut self, data: MovingData) {
+    //}
+//}
 
 pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     for entity in entities {
@@ -20,10 +35,10 @@ pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
 
         for (i, component) in entity.components.iter().enumerate() {
             match component {
-                Component::Velocity(_) => {
+                OldComponent::Velocity(_) => {
                     velocity_component_indx = i;
                 },
-                Component::Position(_) => {
+                OldComponent::Position(_) => {
                     position_component_indx = i;
                 }
                 _ => {}
@@ -33,10 +48,10 @@ pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
             let prev_position = &entity.components[position_component_indx];
             let velocity = &entity.components[velocity_component_indx];
 
-            if let Component::Position(pos) = prev_position {
-                if let Component::Velocity(vel) = velocity {
+            if let OldComponent::Position(pos) = prev_position {
+                if let OldComponent::Velocity(vel) = velocity {
                     let new_point = pos + vel * frame_data.delta_time as f32;
-                    entity.components[position_component_indx] = Component::Position(new_point);
+                    entity.components[position_component_indx] = OldComponent::Position(new_point);
                 }
             }
         }
@@ -54,20 +69,20 @@ pub fn mouse_follow(entities : &mut Vec<Entity>, frame_data : &super::FrameData 
 
         for (i, component) in entity.components.iter().enumerate() {
             match component {
-                Component::FollowMouse => {
+                OldComponent::FollowMouse => {
                     has_follow_mouse = true;
                 },
-                Component::Position(_) => {
+                OldComponent::Position(_) => {
                     position_component_indx = i;
                 }
-                Component::Size(s) => {
+                OldComponent::Size(s) => {
                     size = *s;
                 }
                 _ => {}
             }
         }
         if has_follow_mouse && position_component_indx != invalid_indx {
-            entity.components[position_component_indx] = Component::Position(mouse_pos - size * 0.5);
+            entity.components[position_component_indx] = OldComponent::Position(mouse_pos - size * 0.5);
         }
     }
 }
@@ -86,13 +101,13 @@ pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
 
         for (i, component) in entity.components.iter().enumerate() {
             match component {
-                Component::Velocity(_) => {
+                OldComponent::Velocity(_) => {
                     velocity_component_indx = i;
                 },
-                Component::Position(_) => {
+                OldComponent::Position(_) => {
                     position_component_indx = i;
                 },
-                Component::Repelled => {
+                OldComponent::Repelled => {
                     has_repelled = true;
                 },
                 _ => {}
@@ -104,8 +119,8 @@ pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
             let prev_position = &entity.components[position_component_indx];
             let velocity = &entity.components[velocity_component_indx];
 
-            if let Component::Position(pos) = prev_position {
-                if let Component::Velocity(vel) = velocity {
+            if let OldComponent::Position(pos) = prev_position {
+                if let OldComponent::Velocity(vel) = velocity {
                     // Here
                     let dir = pos - mouse_pos;
 
@@ -113,13 +128,13 @@ pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
                         Action::Press => {
                             if pos.distance2(mouse_pos) < attract_radius2 {
                                 let new_vel = - dir / 5.0;
-                                entity.components[velocity_component_indx] = Component::Velocity(new_vel);
+                                entity.components[velocity_component_indx] = OldComponent::Velocity(new_vel);
                             }
                         }
                         Action::Release => {
                             if pos.distance2(mouse_pos) < repel_radius2 {
                                 let new_vel = vel + dir;
-                                entity.components[velocity_component_indx] = Component::Velocity(new_vel);
+                                entity.components[velocity_component_indx] = OldComponent::Velocity(new_vel);
                             }
                         }
                         _ => {}
@@ -130,7 +145,7 @@ pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     }
 }
 
-pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
+pub fn drawable(entities : Vec<Entity>, renderer : &mut Renderer) {
     for entity in entities {
 
         let mut position = Point2{x: 0.0, y: 0.0};
@@ -141,19 +156,19 @@ pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
 
         for component in &entity.components {
             match component {
-                Component::Drawable => {
+                OldComponent::Drawable => {
                     has_drawable = true;
                 },
-                Component::Position(pos) => {
+                OldComponent::Position(pos) => {
                     position = *pos;
                 },
-                Component::Size(s) => {
+                OldComponent::Size(s) => {
                     size = *s;
                 },
-                Component::Color(c) => {
+                OldComponent::Color(c) => {
                     color = *c;
                 },
-                Component::Texture(txtr) => {
+                OldComponent::Texture(txtr) => {
                     texture = Some(txtr);
                 },
                 _ => {}

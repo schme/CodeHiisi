@@ -11,6 +11,16 @@ pub type Index = u32;
 pub type Generation = u32;
 
 #[derive(Debug)]
+pub struct Entity(Index, Generation);
+
+impl Entity {
+    pub fn new() -> Self {
+        let id = ENTITY_ID_COUNTER.fetch_add(1, Ordering::Relaxed);
+        Entity(id, 0)
+    }
+}
+
+#[derive(Debug)]
 pub struct Entities {
     index_map: HashMap<Index, usize>,
     data: Vec<Entity>,
@@ -19,6 +29,11 @@ pub struct Entities {
 // TODO: Remove entities
 // TODO: Reuse unused indices
 impl Entities {
+
+    pub fn new() -> Self {
+        Entities{ index_map: HashMap::new(), data: Vec::with_capacity(8)}
+    }
+
     pub fn new_entity(&mut self) -> &mut Entity {
         let entity = Entity::new();
         let entity_id = entity.0;
@@ -36,12 +51,3 @@ impl Entities {
     }
 }
 
-#[derive(Debug)]
-pub struct Entity(Index, Generation);
-
-impl Entity {
-    pub fn new() -> Self {
-        let id = ENTITY_ID_COUNTER.fetch_add(1, Ordering::Relaxed);
-        Entity(id, 0)
-    }
-}

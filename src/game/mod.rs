@@ -34,7 +34,7 @@ impl Game {
         system::mouse_follow(&mut self.world.entities, &data);
         system::repelled(&mut self.world.entities, &data);
         system::moving(&mut self.world.entities, &data);
-        system::drawable(&self.world.entities, renderer);
+        system::drawable(self.world.entities, renderer);
     }
 }
 
