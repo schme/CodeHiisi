@@ -17,14 +17,14 @@ use ecs::{
 };
 
 
-pub struct Read<'a, T>
+pub struct Read<'a, T: 'a>
 where
     T: Resource
 {
     val: Fetcher<'a, T>,
 }
 
-pub struct Write<'a, T>
+pub struct Write<'a, T: 'a>
 where
     T: Resource
 {
@@ -46,12 +46,12 @@ impl<'a, T> DynamicData<'a> for Read<'a, T>
 where
     T: Resource
 {
-    fn setup(&self, world: &mut World) {
+    fn setup(&mut self, world: &mut World) {
 
     }
 
-    fn fetch(&self, world: &'a World) -> T {
-        *world.get::<T>()
+    fn fetch(&self, world: &'a World) -> Self {
+        world.get::<T>().into()
     }
 }
 
@@ -190,11 +190,11 @@ impl World {
         }
     }
 
-    pub fn add_entry<T>(&mut self)
+    pub fn insert_default<T>(&mut self)
     where
-        T: Resource
+        T: Resource + Default
     {
-        self.resources.
+        self.insert::<T>(Default::default());
     }
 
     ///
