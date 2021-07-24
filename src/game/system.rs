@@ -1,30 +1,42 @@
 use {
     game::{
         entity::{Entity},
-        component::{self, OldComponent},
+        component::{self, Position, Velocity, OldComponent},
     },
     engine::{
         ecs::{
             system::System,
-            storage::UncheckedStorage,
+            world::{World, Read, Write},
+            storage::{UncheckedStorage, SimpleStorage},
         },
-        math::{self,Point2, Vector2, Vector3, MetricSpace},
+        math::{self, Point2, Vector2, Vector3, MetricSpace},
         renderer::{Renderer},
         platform::Action,
     },
 };
 
-//struct Moving;
-//struct MovingData {
-    //frame_data: &super::FrameData,
-    //position: &mut UncheckedStorage<Position>,
-    //velocity: &UncheckedStorage<Velocity>,
-//}
+//pub struct Moving;
 
-//impl System for Moving {
-    //pub fn run(&mut self, data: MovingData) {
+//impl<'a> System<'a> for Moving {
+    //type SystemData = (Write<'a, Position>,
+                        //Read<'a, Velocity>,
+                        //Read<'a, super::FrameData>,);
+
+    //fn run(&mut self, data: Self::SystemData) {
     //}
 //}
+
+
+pub struct MySystem;
+
+impl<'a> System<'a> for MySystem {
+    type SystemData = Read<'a, super::FrameData>;
+
+    fn run(&mut self, data: Self::SystemData) {
+        println!("system reporting ms: {}", *data.0.time_delta);
+    }
+}
+
 
 pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     for entity in entities {
@@ -145,7 +157,7 @@ pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     }
 }
 
-pub fn drawable(entities : Vec<Entity>, renderer : &mut Renderer) {
+pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
     for entity in entities {
 
         let mut position = Point2{x: 0.0, y: 0.0};

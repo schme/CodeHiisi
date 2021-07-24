@@ -6,12 +6,21 @@ mod system;
 use std::error::Error;
 
 use engine::{
+    ecs::{
+        world::World,
+        system::System,
+        storage::{UncheckedStorage, SimpleStorage},
+    },
     renderer::{Renderer},
     platform::{MouseButtonState},
 };
 
-use self::world::World;
+use self::{
+    component::{Position, Velocity},
+    system::*,
+};
 
+#[derive(Default)]
 pub struct FrameData {
     pub delta_time: f64,
     pub cursor_x: f64,
@@ -20,21 +29,33 @@ pub struct FrameData {
 }
 
 pub struct Game {
+    old_world: self::world::World,
     world: World,
 }
 
 impl Game {
 
     pub fn new() -> Result<Game, Box<dyn Error>> {
-        Ok(Game { world: World::new() })
+
+        let mut world = World::new();
+        world.insert::<FrameData>(Default::default());
+        //world.insert::<SimpleStorage<Position>>(Default::default());
+        //world.insert::<SimpleStorage<Velocity>>(Default::default());
+
+        Ok(Game {
+            old_world: self::world::World::new(),
+            world,
+        })
     }
 
     pub fn update(&mut self, data: FrameData, renderer : &mut Renderer) {
 
-        system::mouse_follow(&mut self.world.entities, &data);
-        system::repelled(&mut self.world.entities, &data);
-        system::moving(&mut self.world.entities, &data);
-        system::drawable(self.world.entities, renderer);
+        Moving.run();
+
+        system::mouse_follow(&mut self.old_world.entities, &data);
+        system::repelled(&mut self.old_world.entities, &data);
+        system::moving(&mut self.old_world.entities, &data);
+        system::drawable(&self.old_world.entities, renderer);
     }
 }
 

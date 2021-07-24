@@ -1,18 +1,121 @@
 ///
 /// Initial version totally plagiarized, partly paraphrazed etc. from
-/// the shred library.
+/// the shred library and similar rust ECS frameworks
 ///
 use std::{
-    collections::HashMap,
     any::{Any, TypeId},
+    cell::{RefCell},
+    borrow::{Borrow, BorrowMut},
+    collections::HashMap,
+    marker::{PhantomData},
+    ops::{Deref, DerefMut},
 };
 
-use {
-    ecs::entity::{Entities, Entity},
-    ecs::component::{Component},
+use ecs::{
+    entity::{Entities, Entity},
+    data::{Fetcher, FetcherMut, DynamicData},
 };
 
-pub trait Resource: Any + 'static {}
+
+pub struct Read<'a, T>
+where
+    T: Resource
+{
+    val: Fetcher<'a, T>,
+}
+
+pub struct Write<'a, T>
+where
+    T: Resource
+{
+    val: FetcherMut<'a, T>,
+}
+
+impl<'a, T> Deref for Read<'a, T>
+where
+    T: Resource
+{
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &*self.val
+    }
+}
+
+impl<'a, T> DynamicData<'a> for Read<'a, T> 
+where
+    T: Resource
+{
+    fn setup(&self, world: &mut World) {
+
+    }
+
+    fn fetch(&self, world: &'a World) -> T {
+        *world.get::<T>()
+    }
+}
+
+impl<'a, T> From<Fetcher<'a, T>> for Read<'a, T>
+where
+    T: Resource
+{
+    fn from(val: Fetcher<'a, T>) -> Self {
+        Read {
+            val,
+        }
+    }
+}
+
+//impl<'a, T> Deref for Write<'a, T>
+//where
+    //T: Resource
+//{
+    //type Target = T;
+
+    //fn deref(&self) -> &Self::Target {
+        //&*self.val.borrow()
+    //}
+//}
+
+//impl<'a, T> DerefMut for Write<'a, T>
+//where
+    //T: Resource
+//{
+    //type Target = T;
+
+    //fn deref_mut(&mut self) -> &mut Self::Target {
+        //&*mut self.val
+    //}
+//}
+
+
+impl<'a, T> Read<'a, T>
+where
+    T: Resource
+{
+
+}
+
+impl<'a, T> Write<'a, T> 
+where
+    T: Resource
+{
+
+}
+
+pub trait Resource: Any + 'static {
+    fn as_any(&self) -> &dyn Any;
+    fn as_any_mut(&mut self) -> &mut dyn Any;
+}
+
+impl<T> Resource for T where T: Any {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
+    }
+}
 
 /// Copied from the shred library as is. Not sure how these should be
 /// properly marked, but here's an attempt!
@@ -48,7 +151,8 @@ impl ResourceId {
 }
 
 pub struct World {
-    resources: HashMap<ResourceId, Box<dyn Resource>>,
+    // TODO: make thread safe, not sure how should be implemented right now
+    resources: HashMap<ResourceId, RefCell<Box<dyn Resource>>>,
 }
 
 impl World {
@@ -64,18 +168,43 @@ impl World {
     }
 
     // Really need to walk through these things
-    pub fn get_resource<T>(&self) -> Option<Box<dyn Resource>>
+    pub fn get<T>(&self) -> Fetcher<T>
     where
         T: Resource
     {
-        self.resources.get(ResourceId::from_type_id(TypeId::of::<T>()))
+        let val = &**self.resources.get(&ResourceId::new::<T>()).unwrap().borrow();
+        Fetcher {
+            val,
+            marker: PhantomData,
+        }
     }
 
+    pub fn get_mut<T>(&mut self) -> FetcherMut<T>
+    where
+        T: Resource
+    {
+        let val = self.resources.get_mut(&ResourceId::new::<T>()).unwrap().borrow_mut();
+        FetcherMut {
+            val,
+            marker: PhantomData,
+        }
+    }
+
+    pub fn add_entry<T>(&mut self)
+    where
+        T: Resource
+    {
+        self.resources.
+    }
+
+    ///
+    /// Local only
+    /// 
     fn insert_by_id<T>(&mut self, id: ResourceId, res: T)
     where
-        T: Resource,
+        T: Resource
     {
-        self.resources.insert(id, Box::new(res));
+        self.resources.insert(id, RefCell::new(Box::new(res)));
     }
 
 }

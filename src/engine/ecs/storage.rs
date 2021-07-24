@@ -32,3 +32,15 @@ where
         }
     }
 }
+
+impl<T> SimpleStorage<T> {
+    pub fn get_raw_storage(&self) -> &Vec<T> {
+        &self.0
+    }
+    pub fn get_raw_storage_mut(&mut self) -> &mut Vec<T> {
+        &mut self.0
+    }
+    pub fn replace_storage(&mut self, new_vec: Vec<T>) {
+        self.0 = new_vec;
+    }
+}

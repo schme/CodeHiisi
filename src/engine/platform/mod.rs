@@ -23,6 +23,16 @@ pub struct MouseButtonState {
     pub middle: Action,
 }
 
+impl Default for MouseButtonState {
+    fn default() -> Self {
+        MouseButtonState {
+            left: Action::Release,
+            right: Action::Release,
+            middle: Action::Release,
+        }
+    }
+}
+
 impl Platform {
 
     pub fn new(title: &str, width: u32, height: u32) -> Platform {

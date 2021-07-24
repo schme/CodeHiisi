@@ -8,7 +8,7 @@ use {
 };
 
 #[derive(Debug)]
-struct Position(Point2<f32>);
+pub struct Position(pub Point2<f32>);
 
 impl Default for Position {
     fn default() -> Self {
@@ -21,7 +21,7 @@ impl Component for Position {
 }
 
 #[derive(Debug)]
-struct Velocity(Vector2<f32>);
+pub struct Velocity(pub Vector2<f32>);
 
 impl Default for Velocity {
     fn default() -> Self {
