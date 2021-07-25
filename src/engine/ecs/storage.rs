@@ -34,6 +34,11 @@ where
 }
 
 impl<T> SimpleStorage<T> {
+
+    pub fn new() -> Self {
+        SimpleStorage(Vec::new())
+    }
+
     pub fn get_raw_storage(&self) -> &Vec<T> {
         &self.0
     }

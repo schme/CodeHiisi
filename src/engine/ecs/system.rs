@@ -1,14 +1,14 @@
 use ecs::{
-    data::DynamicData,
+    data::{SystemData, DynamicData},
     world::World,
 };
 
 pub trait System<'a> {
-    type SystemData: DynamicData<'a>;
+    type SystemData: SystemData<'a>;
 
     fn run_now(&mut self, world: &'a World) {
-        let data = *world.get::<Self::SystemData>();
-        //self.run(data);
+        let data: Self::SystemData = SystemData::fetch(world);
+        self.run(data);
     }
 
     fn run(&mut self, data: Self::SystemData);

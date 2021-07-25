@@ -2,7 +2,7 @@ pub extern crate glfw;
 
 pub mod file;
 
-use std::str;
+use std::{str, fmt};
 use engine::renderer;
 pub use self::glfw::{Action, Key};
 
@@ -30,6 +30,16 @@ impl Default for MouseButtonState {
             right: Action::Release,
             middle: Action::Release,
         }
+    }
+}
+
+impl fmt::Debug for MouseButtonState {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("MouseButtonState")
+            .field("left", &self.left)
+            .field("right", &self.right)
+            .field("middle", &self.middle)
+            .finish()
     }
 }
 

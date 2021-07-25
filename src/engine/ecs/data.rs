@@ -1,4 +1,5 @@
 use std:: {
+    cell::{Ref, RefMut},
     ops::{Deref, DerefMut},
     marker::{PhantomData},
 };
@@ -7,18 +8,15 @@ use ecs::{
     world::{World, Resource},
 };
 
-pub struct Fetcher<'a, T: 'a> 
-{
-    val: &'a dyn Resource,
-    marker: PhantomData<&'a T>,
+pub struct Fetcher<'a, T: 'a> {
+    pub val: Ref<'a, dyn Resource>,
+    pub marker: PhantomData<&'a T>,
 }
 
 pub struct FetcherMut<'a, T: 'a> 
-where
-    T: Resource,
 {
-    val: &'a mut dyn Resource,
-    marker: PhantomData<T>,
+    pub val: RefMut<'a, dyn Resource>,
+    pub marker: PhantomData<&'a mut T>,
 }
 
 impl<'a, T> Deref for Fetcher<'a, T>
@@ -27,16 +25,33 @@ where
 {
     type Target = T;
 
-    fn deref(&self) -> &Self::Target {
-        unsafe { self.val.as_any().downcast_ref().unwrap() }
+    fn deref(&self) -> &T {
+        (*self.val).as_any().downcast_ref()
+            .expect("Could not downcast Fetcher!")
     }
 }
 
-//impl<'a, T> for FetcherMut<'a, T> {
-    //fn fetch(&self, world: &'a World) -> Self {
-        //world.get_mut::<T>()
-    //}
-//}
+impl<'a, T> Deref for FetcherMut<'a, T>
+where
+    T: Resource
+{
+    type Target = T;
+
+    fn deref(&self) -> &T {
+        (*self.val).as_any().downcast_ref()
+            .expect("Could not downcast Fetcher!")
+    }
+}
+
+impl<'a, T> DerefMut for FetcherMut<'a, T>
+where
+    T: Resource
+{
+    fn deref_mut(&mut self) -> &mut T {
+        (*self.val).as_any_mut().downcast_mut()
+            .expect("Could not downcast Fetcher!")
+    }
+}
 
 impl<'a, T> DynamicData<'a> for T
 where
@@ -58,13 +73,9 @@ pub trait DynamicData<'a> {
 
     /// Get yourself from the world
     fn fetch(&self, world: &'a World) -> Self;
-
-
-    // TODO: read/write bookkeeping
 }
 
 pub trait SystemData<'a> {
     fn setup(world: &mut World);
     fn fetch(world: &'a World) -> Self;
-
 }

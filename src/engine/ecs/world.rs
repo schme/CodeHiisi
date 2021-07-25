@@ -4,8 +4,7 @@
 ///
 use std::{
     any::{Any, TypeId},
-    cell::{RefCell},
-    borrow::{Borrow, BorrowMut},
+    cell::{RefCell, Ref, RefMut},
     collections::HashMap,
     marker::{PhantomData},
     ops::{Deref, DerefMut},
@@ -13,9 +12,21 @@ use std::{
 
 use ecs::{
     entity::{Entities, Entity},
-    data::{Fetcher, FetcherMut, DynamicData},
+    data::{Fetcher, FetcherMut, SystemData},
 };
 
+macro_rules! get_panic {
+    () => {{
+        panic!(
+            "\
+            Tried to get resource with id `{:?}`[^1] from the `World`, but \
+            the resource does not exist.\n\n\
+            [^1]: Full type name: `{}`",
+            resource_id = TypeId::of::<T>(),
+            resource_name = std::any::type_name::<T>(),
+        )
+    }};
+}
 
 pub struct Read<'a, T: 'a>
 where
@@ -42,15 +53,14 @@ where
     }
 }
 
-impl<'a, T> DynamicData<'a> for Read<'a, T> 
+impl<'a, T> SystemData<'a> for Read<'a, T>
 where
-    T: Resource
+    T: Resource + Default
 {
-    fn setup(&mut self, world: &mut World) {
-
+    fn setup(world: &mut World) {
+        world.enter_resource::<T>();
     }
-
-    fn fetch(&self, world: &'a World) -> Self {
+    fn fetch(world: &'a World) -> Self {
         world.get::<T>().into()
     }
 }
@@ -61,6 +71,17 @@ where
 {
     fn from(val: Fetcher<'a, T>) -> Self {
         Read {
+            val,
+        }
+    }
+}
+
+impl<'a, T> From<FetcherMut<'a, T>> for Write<'a, T>
+where
+    T: Resource
+{
+    fn from(val: FetcherMut<'a, T>) -> Self {
+        Write {
             val,
         }
     }
@@ -108,7 +129,10 @@ pub trait Resource: Any + 'static {
     fn as_any_mut(&mut self) -> &mut dyn Any;
 }
 
-impl<T> Resource for T where T: Any {
+impl<T> Resource for T
+where
+    T: Any
+{
     fn as_any(&self) -> &dyn Any {
         self
     }
@@ -116,6 +140,23 @@ impl<T> Resource for T where T: Any {
         self
     }
 }
+
+//impl<T> AsAny for T
+//where
+    //T: Resource
+//{
+    //fn as_any(&self) -> &dyn Any {
+        //self
+    //}
+    //fn as_any_mut(&mut self) -> &mut dyn Any {
+        //self
+    //}
+//}
+
+//pub trait AsAny: {
+    //fn as_any(&self) -> &dyn Any;
+    //fn as_any_mut(&mut self) -> &mut dyn Any;
+//}
 
 /// Copied from the shred library as is. Not sure how these should be
 /// properly marked, but here's an attempt!
@@ -151,7 +192,6 @@ impl ResourceId {
 }
 
 pub struct World {
-    // TODO: make thread safe, not sure how should be implemented right now
     resources: HashMap<ResourceId, RefCell<Box<dyn Resource>>>,
 }
 
@@ -167,26 +207,70 @@ impl World {
         self.insert_by_id(ResourceId::new::<T>(), res);
     }
 
-    // Really need to walk through these things
     pub fn get<T>(&self) -> Fetcher<T>
     where
         T: Resource
     {
-        let val = &**self.resources.get(&ResourceId::new::<T>()).unwrap().borrow();
-        Fetcher {
-            val,
-            marker: PhantomData,
-        }
+        self.try_get().unwrap_or_else(|| {
+            if self.resources.is_empty() {
+                eprintln!("Could not fetch resource, World is empty!");
+            }
+            get_panic!()
+        })
     }
 
-    pub fn get_mut<T>(&mut self) -> FetcherMut<T>
+    pub fn try_get<T>(&self) -> Option<Fetcher<T>>
     where
         T: Resource
     {
-        let val = self.resources.get_mut(&ResourceId::new::<T>()).unwrap().borrow_mut();
-        FetcherMut {
-            val,
+        let res_id = ResourceId::new::<T>();
+
+        self.resources.get(&res_id).map(|rc| Fetcher {
+            val: Ref::map(rc.borrow(), Box::as_ref),
             marker: PhantomData,
+        })
+    }
+
+    pub fn get_mut<T>(&self) -> FetcherMut<T>
+    where
+        T: Resource
+    {
+        self.try_get_mut().unwrap_or_else(|| {
+            if self.resources.is_empty() {
+                eprintln!("Could not fetch resource, World is empty!");
+            }
+            get_panic!()
+        })
+    }
+
+    pub fn try_get_mut<T>(&self) -> Option<FetcherMut<T>>
+    where
+        T: Resource
+    {
+        let res_id = ResourceId::new::<T>();
+        self.resources.get(&res_id).map(|rc| FetcherMut {
+            val: RefMut::map(rc.borrow_mut(), Box::as_mut),
+            marker: PhantomData,
+        })
+    }
+
+    pub fn enter_resource_with<T>(&mut self, with: T)
+    where
+        T: Resource
+    {
+        let id = ResourceId::new::<T>();
+        if !self.resources.contains_key(&id) {
+            self.insert_by_id::<T>(id, with);
+        }
+    }
+
+    pub fn enter_resource<T>(&mut self)
+    where
+        T: Resource + Default
+    {
+        let id = ResourceId::new::<T>();
+        if !self.resources.contains_key(&id) {
+            self.insert_default::<T>();
         }
     }
 
@@ -195,6 +279,17 @@ impl World {
         T: Resource + Default
     {
         self.insert::<T>(Default::default());
+    }
+
+    pub fn setup<'a, T: SystemData<'a>>(&mut self) {
+        T::setup(self);
+    }
+
+    pub fn system_data<'a, T>(&'a self) -> T
+    where
+        T: SystemData<'a>,
+    {
+        SystemData::fetch(&self)
     }
 
     ///

@@ -7,9 +7,9 @@ use std::error::Error;
 
 use engine::{
     ecs::{
-        world::World,
+        world::{World, Read},
         system::System,
-        storage::{UncheckedStorage, SimpleStorage},
+        storage::{SimpleStorage},
     },
     renderer::{Renderer},
     platform::{MouseButtonState},
@@ -20,7 +20,7 @@ use self::{
     system::*,
 };
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct FrameData {
     pub delta_time: f64,
     pub cursor_x: f64,
@@ -50,12 +50,15 @@ impl Game {
 
     pub fn update(&mut self, data: FrameData, renderer : &mut Renderer) {
 
-        Moving.run();
+        *self.world.get_mut::<FrameData>() = data;
 
-        system::mouse_follow(&mut self.old_world.entities, &data);
-        system::repelled(&mut self.old_world.entities, &data);
-        system::moving(&mut self.old_world.entities, &data);
-        system::drawable(&self.old_world.entities, renderer);
+        MySystem.run_now(&self.world);
+        Moving.run_now(&self.world);
+
+        //system::mouse_follow(&mut self.old_world.entities, &data);
+        //system::repelled(&mut self.old_world.entities, &data);
+        //system::moving(&mut self.old_world.entities, &data);
+        //system::drawable(&self.old_world.entities, renderer);
     }
 }
 

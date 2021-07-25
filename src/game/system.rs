@@ -5,6 +5,7 @@ use {
     },
     engine::{
         ecs::{
+            data::{SystemData, Fetcher, FetcherMut},
             system::System,
             world::{World, Read, Write},
             storage::{UncheckedStorage, SimpleStorage},
@@ -15,16 +16,42 @@ use {
     },
 };
 
-//pub struct Moving;
+pub struct Moving;
 
-//impl<'a> System<'a> for Moving {
+pub struct MovingData<'a> {
+    position: Write<'a, SimpleStorage<Position>>,
+    velocity: Read<'a, SimpleStorage<Velocity>>,
+    frame_data: Read<'a, super::FrameData>,
+}
+
+impl<'a> SystemData<'a> for MovingData<'a> {
+    fn setup(world: &mut World) {
+        world.enter_resource_with::<SimpleStorage<Position>>(SimpleStorage::new());
+        world.enter_resource_with::<SimpleStorage<Velocity>>(SimpleStorage::new());
+        world.enter_resource::<super::FrameData>();
+    }
+    fn fetch(world: &'a World) -> Self {
+        let position: Write<'a, SimpleStorage<Position>> = world.get_mut::<SimpleStorage<Position>>().into();
+        let velocity: Read<'a, SimpleStorage<Velocity>> = world.get::<SimpleStorage<Velocity>>().into();
+        let frame_data = world.get::<super::FrameData>().into();
+
+        MovingData {
+            position,
+            velocity,
+            frame_data
+        }
+    }
+}
+
+impl<'a> System<'a> for Moving {
     //type SystemData = (Write<'a, Position>,
                         //Read<'a, Velocity>,
                         //Read<'a, super::FrameData>,);
+    type SystemData = MovingData<'a>;
 
-    //fn run(&mut self, data: Self::SystemData) {
-    //}
-//}
+    fn run(&mut self, data: Self::SystemData) {
+    }
+}
 
 
 pub struct MySystem;
@@ -33,7 +60,7 @@ impl<'a> System<'a> for MySystem {
     type SystemData = Read<'a, super::FrameData>;
 
     fn run(&mut self, data: Self::SystemData) {
-        println!("system reporting ms: {}", *data.0.time_delta);
+        println!("system reporting delta_time: {}", (*data).delta_time);
     }
 }
 
