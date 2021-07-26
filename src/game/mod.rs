@@ -7,16 +7,15 @@ use std::error::Error;
 
 use engine::{
     ecs::{
-        world::{World, Read},
-        system::System,
-        storage::{SimpleStorage},
+        entity::{Entities},
+        world::{World},
+        system::{System},
     },
     renderer::{Renderer},
     platform::{MouseButtonState},
 };
 
 use self::{
-    component::{Position, Velocity},
     system::*,
 };
 
@@ -29,21 +28,27 @@ pub struct FrameData {
 }
 
 pub struct Game {
-    old_world: self::world::World,
+    _old_world: self::world::World,
     world: World,
 }
 
 impl Game {
 
     pub fn new() -> Result<Game, Box<dyn Error>> {
-
         let mut world = World::new();
+
+        {
+            let mut entities = Entities::new();
+            for _ in 0..5000 {
+                entities.new_entity();
+            }
+            world.insert(entities);
+        }
         world.insert::<FrameData>(Default::default());
-        //world.insert::<SimpleStorage<Position>>(Default::default());
-        //world.insert::<SimpleStorage<Velocity>>(Default::default());
+        <Moving as System>::setup(&mut world);
 
         Ok(Game {
-            old_world: self::world::World::new(),
+            _old_world: self::world::World::new(),
             world,
         })
     }
@@ -55,10 +60,10 @@ impl Game {
         MySystem.run_now(&self.world);
         Moving.run_now(&self.world);
 
-        //system::mouse_follow(&mut self.old_world.entities, &data);
-        //system::repelled(&mut self.old_world.entities, &data);
-        //system::moving(&mut self.old_world.entities, &data);
-        //system::drawable(&self.old_world.entities, renderer);
+        //system::_mouse_follow(&mut self._old_world.entities, &data);
+        //system::_repelled(&mut self._old_world.entities, &data);
+        //system::_moving(&mut self._old_world.entities, &data);
+        //system::_drawable(&self._old_world.entities, renderer);
     }
 }
 

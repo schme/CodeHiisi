@@ -1,6 +1,5 @@
 use {
     engine::ecs::{
-        self,
         component::Component,
         storage::SimpleStorage,
     },

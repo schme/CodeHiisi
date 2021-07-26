@@ -1,5 +1,5 @@
 use ecs::{
-    data::{SystemData, DynamicData},
+    data::{SystemData},
     world::World,
 };
 
@@ -11,6 +11,9 @@ pub trait System<'a> {
         self.run(data);
     }
 
+    fn setup(world: &mut World) {
+        <Self::SystemData as SystemData<'a>>::setup(world);
+    }
+
     fn run(&mut self, data: Self::SystemData);
 }
-

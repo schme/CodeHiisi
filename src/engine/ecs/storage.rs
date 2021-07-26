@@ -1,6 +1,5 @@
 use {
-    ecs::entity::{Index, Entity},
-    ecs::component::{Component},
+    ecs::entity::{Index},
 };
 
 // Unsafe yet faster access
@@ -11,7 +10,7 @@ pub trait UncheckedStorage<T> {
     unsafe fn insert(&mut self, id: Index, value: T);
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct SimpleStorage<T>(Vec<T>);
 
 impl<T> UncheckedStorage<T> for SimpleStorage<T> 
@@ -33,8 +32,9 @@ where
     }
 }
 
-impl<T> SimpleStorage<T> {
-
+/// Simple index vector, where a default value is created for every Index
+impl<T> SimpleStorage<T>
+{
     pub fn new() -> Self {
         SimpleStorage(Vec::new())
     }

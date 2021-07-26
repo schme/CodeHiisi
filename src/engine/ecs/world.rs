@@ -1,6 +1,7 @@
 ///
-/// Initial version totally plagiarized, partly paraphrazed etc. from
-/// the shred library and similar rust ECS frameworks
+/// Totally plagiarized, partly paraphrazed etc. from
+/// the shred library and similar rust ECS frameworks.
+/// Rewritten for educational purposes.
 ///
 use std::{
     any::{Any, TypeId},
@@ -11,59 +12,23 @@ use std::{
 };
 
 use ecs::{
-    entity::{Entities, Entity},
-    data::{Fetcher, FetcherMut, SystemData},
+    data::{Read, Write, SystemData},
 };
+
 
 macro_rules! get_panic {
     () => {{
         panic!(
             "\
-            Tried to get resource with id `{:?}`[^1] from the `World`, but \
+            Tried to get resource with id `{:?}` from the `World`, but \
             the resource does not exist.\n\n\
-            [^1]: Full type name: `{}`",
+            Full type name: `{}`",
             resource_id = TypeId::of::<T>(),
             resource_name = std::any::type_name::<T>(),
         )
     }};
 }
 
-pub struct Read<'a, T: 'a>
-where
-    T: Resource
-{
-    val: Fetcher<'a, T>,
-}
-
-pub struct Write<'a, T: 'a>
-where
-    T: Resource
-{
-    val: FetcherMut<'a, T>,
-}
-
-impl<'a, T> Deref for Read<'a, T>
-where
-    T: Resource
-{
-    type Target = T;
-
-    fn deref(&self) -> &Self::Target {
-        &*self.val
-    }
-}
-
-impl<'a, T> SystemData<'a> for Read<'a, T>
-where
-    T: Resource + Default
-{
-    fn setup(world: &mut World) {
-        world.enter_resource::<T>();
-    }
-    fn fetch(world: &'a World) -> Self {
-        world.get::<T>().into()
-    }
-}
 
 impl<'a, T> From<Fetcher<'a, T>> for Read<'a, T>
 where
@@ -87,42 +52,63 @@ where
     }
 }
 
-//impl<'a, T> Deref for Write<'a, T>
-//where
-    //T: Resource
-//{
-    //type Target = T;
+impl<'a, T> SystemData<'a> for Write<'a, T>
+where
+    T: Resource + Default
+{
+    fn setup(world: &mut World) {
+        world.enter_resource::<T>();
+    }
+    fn fetch(world: &'a World) -> Self {
+        world.get_mut::<T>().into()
+    }
+}
 
-    //fn deref(&self) -> &Self::Target {
-        //&*self.val.borrow()
-    //}
-//}
+pub struct Fetcher<'a, T: 'a> {
+    pub val: Ref<'a, dyn Resource>,
+    pub marker: PhantomData<&'a T>,
+}
 
-//impl<'a, T> DerefMut for Write<'a, T>
-//where
-    //T: Resource
-//{
-    //type Target = T;
+pub struct FetcherMut<'a, T: 'a> 
+{
+    pub val: RefMut<'a, dyn Resource>,
+    pub marker: PhantomData<&'a mut T>,
+}
 
-    //fn deref_mut(&mut self) -> &mut Self::Target {
-        //&*mut self.val
-    //}
-//}
-
-
-impl<'a, T> Read<'a, T>
+impl<'a, T> Deref for Fetcher<'a, T>
 where
     T: Resource
 {
+    type Target = T;
 
+    fn deref(&self) -> &T {
+        (*self.val).as_any().downcast_ref()
+            .expect("Could not downcast Fetcher!")
+    }
 }
 
-impl<'a, T> Write<'a, T> 
+impl<'a, T> Deref for FetcherMut<'a, T>
 where
     T: Resource
 {
+    type Target = T;
 
+    fn deref(&self) -> &T {
+        (*self.val).as_any().downcast_ref()
+            .expect("Could not downcast Fetcher!")
+    }
 }
+
+impl<'a, T> DerefMut for FetcherMut<'a, T>
+where
+    T: Resource
+{
+    fn deref_mut(&mut self) -> &mut T {
+        (*self.val).as_any_mut().downcast_mut()
+            .expect("Could not downcast Fetcher!")
+    }
+}
+
 
 pub trait Resource: Any + 'static {
     fn as_any(&self) -> &dyn Any;
@@ -141,25 +127,7 @@ where
     }
 }
 
-//impl<T> AsAny for T
-//where
-    //T: Resource
-//{
-    //fn as_any(&self) -> &dyn Any {
-        //self
-    //}
-    //fn as_any_mut(&mut self) -> &mut dyn Any {
-        //self
-    //}
-//}
-
-//pub trait AsAny: {
-    //fn as_any(&self) -> &dyn Any;
-    //fn as_any_mut(&mut self) -> &mut dyn Any;
-//}
-
-/// Copied from the shred library as is. Not sure how these should be
-/// properly marked, but here's an attempt!
+/// ResourceId copied from the shred library as is
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct ResourceId {
     type_id: TypeId,
@@ -292,9 +260,9 @@ impl World {
         SystemData::fetch(&self)
     }
 
-    ///
-    /// Local only
-    /// 
+    //
+    // Local only
+    // 
     fn insert_by_id<T>(&mut self, id: ResourceId, res: T)
     where
         T: Resource
@@ -302,4 +270,68 @@ impl World {
         self.resources.insert(id, RefCell::new(Box::new(res)));
     }
 
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[derive(Default, Debug, PartialEq)]
+    struct Data(f32);
+
+    #[test]
+    fn system_data() {
+        let mut world = World::new();
+
+        world.insert(42u32);
+        world.insert(Data(47.0));
+        let r = world.system_data::<Read<u32>>();
+        assert_eq!(*r, 42);
+
+        let r = world.system_data::<Read<Data>>();
+        assert_eq!(*r, Data(47.0));
+    }
+
+    #[test]
+    fn insert_overrides_previous_value() {
+        let mut world = World::new();
+
+        {
+            world.insert(42u32);
+            let r = world.system_data::<Read<u32>>();
+            assert_eq!(*r, 42);
+        }
+
+        {
+            world.insert(52u32);
+            let r = world.system_data::<Read<u32>>();
+            assert_eq!(*r, 52);
+        }
+    }
+
+    #[test]
+    #[should_panic()]
+    fn panic_on_unavailable_resource() {
+        let mut world = World::new();
+
+        let r = world.system_data::<Read<i32>>();
+    }
+
+    #[test]
+    fn get_optional() {
+        let mut world = World::new();
+
+        world.insert(5i32);
+
+        let opt = world.try_get::<i32>();
+        assert_eq!(*opt.unwrap(), 5);
+
+        let opt = world.try_get_mut::<i32>();
+        assert_eq!(*opt.unwrap(), 5);
+
+        let opt = world.try_get::<f32>();
+        assert_eq!(opt.is_none(), true);
+    }
 }

@@ -1,14 +1,14 @@
 use {
     game::{
         entity::{Entity},
-        component::{self, Position, Velocity, OldComponent},
+        component::{Position, Velocity, OldComponent},
     },
     engine::{
         ecs::{
-            data::{SystemData, Fetcher, FetcherMut},
+            data::{SystemData, Read, Write},
             system::System,
-            world::{World, Read, Write},
-            storage::{UncheckedStorage, SimpleStorage},
+            world::{World},
+            storage::{SimpleStorage},
         },
         math::{self, Point2, Vector2, Vector3, MetricSpace},
         renderer::{Renderer},
@@ -18,41 +18,17 @@ use {
 
 pub struct Moving;
 
-pub struct MovingData<'a> {
-    position: Write<'a, SimpleStorage<Position>>,
-    velocity: Read<'a, SimpleStorage<Velocity>>,
-    frame_data: Read<'a, super::FrameData>,
-}
-
-impl<'a> SystemData<'a> for MovingData<'a> {
-    fn setup(world: &mut World) {
-        world.enter_resource_with::<SimpleStorage<Position>>(SimpleStorage::new());
-        world.enter_resource_with::<SimpleStorage<Velocity>>(SimpleStorage::new());
-        world.enter_resource::<super::FrameData>();
-    }
-    fn fetch(world: &'a World) -> Self {
-        let position: Write<'a, SimpleStorage<Position>> = world.get_mut::<SimpleStorage<Position>>().into();
-        let velocity: Read<'a, SimpleStorage<Velocity>> = world.get::<SimpleStorage<Velocity>>().into();
-        let frame_data = world.get::<super::FrameData>().into();
-
-        MovingData {
-            position,
-            velocity,
-            frame_data
-        }
-    }
-}
-
 impl<'a> System<'a> for Moving {
-    //type SystemData = (Write<'a, Position>,
-                        //Read<'a, Velocity>,
-                        //Read<'a, super::FrameData>,);
-    type SystemData = MovingData<'a>;
+    type SystemData = (Write<'a, SimpleStorage<Position>>,
+                        Read<'a, SimpleStorage<Velocity>>,
+                        Read<'a, super::FrameData>,);
 
     fn run(&mut self, data: Self::SystemData) {
+        let _frame_data = &*data.2;
+        let _velocites = &*data.1;
+        let _positions = &*data.0;
     }
 }
-
 
 pub struct MySystem;
 
@@ -65,7 +41,7 @@ impl<'a> System<'a> for MySystem {
 }
 
 
-pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
+pub fn _moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     for entity in entities {
 
         let invalid_indx = entity.components.len();
@@ -97,7 +73,7 @@ pub fn moving(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     }
 }
 
-pub fn mouse_follow(entities : &mut Vec<Entity>, frame_data : &super::FrameData ) {
+pub fn _mouse_follow(entities : &mut Vec<Entity>, frame_data : &super::FrameData ) {
     for entity in entities {
 
         let mouse_pos = Point2{x: frame_data.cursor_x as f32, y: frame_data.cursor_y as f32};
@@ -126,7 +102,7 @@ pub fn mouse_follow(entities : &mut Vec<Entity>, frame_data : &super::FrameData 
     }
 }
 
-pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
+pub fn _repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     let repel_radius2 = 2500f32;
     let attract_radius2 = 10000f32;
     let mouse_pos = math::Point2::new(frame_data.cursor_x as f32, frame_data.cursor_y as f32);
@@ -184,7 +160,7 @@ pub fn repelled(entities : &mut Vec<Entity>, frame_data : &super::FrameData) {
     }
 }
 
-pub fn drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
+pub fn _drawable(entities : &Vec<Entity>, renderer : &mut Renderer) {
     for entity in entities {
 
         let mut position = Point2{x: 0.0, y: 0.0};
