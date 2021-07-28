@@ -10,6 +10,7 @@ use std::{
 };
 
 use engine::{
+    ecs::{System, SystemData},
     math::{self, Point2, Vector2, Vector3},
     platform::glfw::{Context},
 };
@@ -37,15 +38,25 @@ struct RenderBuffer {
     shader_id : u32,
 }
 
+
+
 pub struct Renderer {
     buffers : Vec<RenderBuffer>,
     textures : TextureStorage,
     vao_id : u32,
 }
 
+impl<'a> System<'a> for Renderer {
+    type SystemData = ();
+
+    fn run(&mut self, data: Self::SystemData) {
+
+    }
+}
+
 impl Renderer {
 
-    pub fn new(window : &mut glfw::Window) -> Renderer {
+    pub fn new(window: &mut glfw::Window) -> Renderer {
         // Make the window's context current
         window.make_current();
 
@@ -64,13 +75,19 @@ impl Renderer {
             gl::Enable(gl::BLEND);
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
         }
-        let mut renderer = Renderer { buffers: Vec::new(), textures: TextureStorage::new(), vao_id: vao};
+
+        let mut renderer = Renderer {
+            buffers: Vec::new(),
+            textures: TextureStorage::new(),
+            vao_id: vao,
+        };
+
         println!("New renderer for {:?}", window);
         renderer.new_quad_buffer(program);
         renderer
     }
 
-    pub fn render(&mut self, window : &mut glfw::Window) {
+    pub fn render(&mut self, window: &mut glfw::Window) {
 
         unsafe {
             gl::ClearColor(0.1, 0.1, 0.1, 1.0);
@@ -89,7 +106,7 @@ impl Renderer {
     }
 
 
-    fn render_buffer(buffer: &mut RenderBuffer, vao_id: u32, window_size : (i32, i32)) {
+    fn render_buffer(buffer: &RenderBuffer, vao_id: u32, window_size : (i32, i32)) {
 
         let out_color_str = CString::new("out_color").unwrap();
 
@@ -177,7 +194,7 @@ impl Renderer {
         let batch_info = RenderBatch {
             start: buff.data.len() / thing_per_vertex,
             count: data.len() / thing_per_vertex,
-            texture_id: texture_id,
+            texture_id,
         };
 
         buff.data.append(data);

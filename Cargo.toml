@@ -9,5 +9,5 @@ rand = "*"
 glfw = "*"
 gl = "*"
 stb_image = "*"
-hibitset = "*"
+specs = { version = "*", features = ["specs-derive"] }
 cgmath = { version = "*", features = ["swizzle"] }

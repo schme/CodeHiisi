@@ -9,6 +9,7 @@ use std::{
 };
 
 use engine::*;
+
 use platform::Platform;
 use renderer::Renderer;
 
@@ -66,7 +67,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
             mouse_state,
         };
 
-        game.update(frame_data, &mut renderer);
+        game.update(frame_data);
 
         renderer.render(&mut platform.window);
 
@@ -77,14 +78,4 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     println!("Main loop done!");
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_thing() {
-        assert!(true);
-    }
 }

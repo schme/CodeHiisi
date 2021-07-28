@@ -1,23 +1,25 @@
 mod world;
-mod entity;
-mod component;
-mod system;
+mod components;
+mod systems;
 
 use std::error::Error;
 
+use crate::rand::{self, Rng};
+
 use engine::{
     ecs::{
-        entity::{Entities},
-        world::{World},
-        system::{System},
+        World, WorldExt, Builder, Dispatcher, DispatcherBuilder,
     },
+    math::{Point2, Vector2},
     renderer::{Renderer},
-    platform::{MouseButtonState},
 };
 
 use self::{
-    system::*,
+    components::*,
+    systems::*,
 };
+
+pub use engine::platform::MouseButtonState;
 
 #[derive(Default, Debug)]
 pub struct FrameData {
@@ -27,43 +29,77 @@ pub struct FrameData {
     pub mouse_state: MouseButtonState,
 }
 
-pub struct Game {
-    _old_world: self::world::World,
-    world: World,
+#[derive(Default)]
+pub struct DeltaTime(f32);
+
+pub struct CursorPos(Point2<f32>);
+
+impl Default for CursorPos {
+    fn default() -> Self {
+        CursorPos(Point2::new(0.0,0.0))
+    }
 }
 
-impl Game {
+pub struct Game<'a> {
+    world: World,
+    dispatcher: Dispatcher<'a, 'a>,
+}
 
-    pub fn new() -> Result<Game, Box<dyn Error>> {
+impl<'a> Game<'a> {
+
+    pub fn new() -> Result<Game<'a>, Box<dyn Error>> {
+
         let mut world = World::new();
+        let mut rng = rand::thread_rng();
 
-        {
-            let mut entities = Entities::new();
-            for _ in 0..5000 {
-                entities.new_entity();
-            }
-            world.insert(entities);
+        world.insert(DeltaTime(Default::default()));
+        world.insert(CursorPos::default());
+        world.insert(MouseButtonState::default());
+
+
+        world.register::<Position>();
+        world.register::<Velocity>();
+        world.register::<Size>();
+        world.register::<Texture>();
+        world.register::<Color>();
+
+        world.register::<FollowingMouse>();
+
+        for _ in 1..5000 {
+            let pos = Position( Point2::new( rng.gen_range(0.0..800.0), rng.gen_range(0.0..800.0)));
+            let vel = Velocity( Vector2::new( rng.gen_range(-10.0..10.0), rng.gen_range(-10.0..10.0)));
+            let size = Size( Vector2::new(20.0, 20.0));
+            let texture = Texture( "auringonkukka.png".to_string());
+            world.create_entity()
+                .with(pos)
+                .with(vel) 
+                .with(size)
+                .with(texture)
+                .build();
         }
-        world.insert::<FrameData>(Default::default());
-        <Moving as System>::setup(&mut world);
+
+        let mut dispatcher = DispatcherBuilder::new()
+            .with(FollowMouse, "follow_mouse", &[])
+            .with(Repelled, "repelled", &[])
+            .with(UpdatePosition, "update_position", &["follow_mouse", "repelled"])
+            .with(SpriteSystem, "sprite_system", &["update_position"])
+            .build();
 
         Ok(Game {
-            _old_world: self::world::World::new(),
             world,
+            dispatcher,
         })
     }
 
-    pub fn update(&mut self, data: FrameData, renderer : &mut Renderer) {
+    pub fn update(&mut self, data: FrameData) {
 
-        *self.world.get_mut::<FrameData>() = data;
+        let world = &self.world;
 
-        MySystem.run_now(&self.world);
-        Moving.run_now(&self.world);
+        *world.write_resource::<DeltaTime>() = DeltaTime(data.delta_time as f32);
+        *world.write_resource::<CursorPos>() = CursorPos(Point2::new(data.cursor_x as f32, data.cursor_y as f32));
+        *world.write_resource::<MouseButtonState>() = data.mouse_state;
 
-        //system::_mouse_follow(&mut self._old_world.entities, &data);
-        //system::_repelled(&mut self._old_world.entities, &data);
-        //system::_moving(&mut self._old_world.entities, &data);
-        //system::_drawable(&self._old_world.entities, renderer);
+        self.dispatcher.dispatch(&mut self.world);
     }
 }
 

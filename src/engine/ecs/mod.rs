@@ -1,6 +1,3 @@
-pub mod storage;
-pub mod component;
-pub mod entity;
-pub mod system;
-pub mod world;
-pub mod data;
+pub extern crate specs;
+
+pub use self::specs::prelude::*;

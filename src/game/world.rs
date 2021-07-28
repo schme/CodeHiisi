@@ -1,3 +1,4 @@
+/*
 use crate::rand::{self, Rng};
 
 use math::{Point2, Vector2, Vector3};
@@ -10,8 +11,6 @@ pub struct World {
 
 impl World {
     pub fn new() -> World {
-        let mut rng = rand::thread_rng();
-        let mut world = World { entities: Vec::new() };
 
         let mut entity = Entity::new();
         entity.add_component(OldComponent::Position(Point2{x: 0.0, y: 0.0}));
@@ -49,3 +48,4 @@ impl World {
         self.entities.push(entity);
     }
 }
+*/
