@@ -118,18 +118,14 @@ fn link_program(vs: GLuint, fs: GLuint) -> GLuint {
     }
 }
 
+pub fn get_proc_address(window: &mut glfw::Window) {
+    gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
+}
+
 pub fn bind_texture_by_id(texture_id: u32) {
     unsafe {
         gl::BindTexture(gl::TEXTURE_2D, texture_id);
     }
-}
-
-pub fn gen_texture() -> u32 {
-    let mut texture_id = 0;
-    unsafe {
-        gl::GenTextures(1, &mut texture_id);
-    }
-    texture_id
 }
 
 pub fn resize_viewport(width : i32, height : i32) {

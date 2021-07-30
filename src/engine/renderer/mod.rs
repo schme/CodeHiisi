@@ -1,7 +1,9 @@
 extern crate gl;
+mod opengl;
 
 pub mod texture;
-mod opengl;
+pub mod systems;
+pub mod components;
 
 use std::{
     mem, ptr,
@@ -10,59 +12,63 @@ use std::{
 };
 
 use engine::{
-    ecs::{System, SystemData},
     math::{self, Point2, Vector2, Vector3},
-    platform::glfw::{Context},
+    platform::{RenderContext, Context},
 };
 
 use self::{
     gl::types::*,
     opengl::*,
-    texture::{TextureStorage},
 };
 
-pub use self::opengl::{resize_viewport};
+pub use self::{
+    opengl::{resize_viewport, get_proc_address},
+    texture::{load_texture, gen_texture},
+};
 
-#[derive(Debug)]
-struct RenderBatch {
+#[derive(Debug, Default)]
+pub struct RenderBatch {
     start: usize,
     count: usize,
     texture_id: u32,
 }
 
-#[derive(Debug)]
-struct RenderBuffer {
-    data : Vec<f32>,
-    batch_data : Vec<RenderBatch>,
-    vbo_id : u32,
-    shader_id : u32,
+#[derive(Debug, Default)]
+pub struct QuadBuffer {
+    array: Vec<f32>,
+    batch_data: Vec<RenderBatch>,
+}
+
+impl QuadBuffer {
+    pub fn new() -> Self {
+        QuadBuffer {
+            array: Vec::new(),
+            batch_data: Vec::new(),
+        }
+    }
+}
+
+pub fn clear_quad_buffer(buffer: &mut QuadBuffer) {
+    buffer.array.clear();
+    buffer.batch_data.clear();
 }
 
 
+#[derive(Debug, Default)]
+struct RenderBuffer {
+    quads: QuadBuffer,
+    vbo_id: u32,
+    shader_id: u32,
+}
 
 pub struct Renderer {
-    buffers : Vec<RenderBuffer>,
-    textures : TextureStorage,
-    vao_id : u32,
-}
-
-impl<'a> System<'a> for Renderer {
-    type SystemData = ();
-
-    fn run(&mut self, data: Self::SystemData) {
-
-    }
+    buffers: Vec<RenderBuffer>,
+    vao_id: u32,
 }
 
 impl Renderer {
 
-    pub fn new(window: &mut glfw::Window) -> Renderer {
-        // Make the window's context current
-        window.make_current();
-
-        window.glfw.set_swap_interval(glfw::SwapInterval::Sync(1));
-
-        gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
+    pub fn new() -> Renderer {
 
         let mut vao = 0;
 
@@ -78,65 +84,47 @@ impl Renderer {
 
         let mut renderer = Renderer {
             buffers: Vec::new(),
-            textures: TextureStorage::new(),
             vao_id: vao,
         };
 
-        println!("New renderer for {:?}", window);
         renderer.new_quad_buffer(program);
         renderer
     }
 
-    pub fn render(&mut self, window: &mut glfw::Window) {
+    pub fn get_quad_buffer_vbo_and_shader(&self) -> (u32, u32) {
+        let quad_buffer = self.buffers.first().expect("No first buffer yet");
+        (quad_buffer.vbo_id, quad_buffer.shader_id)
+    }
+
+    pub fn render(&mut self, window_size: (i32, i32), ctx: &mut RenderContext) {
 
         unsafe {
             gl::ClearColor(0.1, 0.1, 0.1, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
 
-        let window_size = window.get_size();
-
         for buffer in &mut self.buffers {
-            Renderer::render_buffer(buffer, self.vao_id, window_size);
-            buffer.data.clear();
-            buffer.batch_data.clear();
+            render_buffer(&buffer.quads, buffer.vbo_id, buffer.shader_id,
+                self.vao_id, window_size);
+            clear_quad_buffer(&mut buffer.quads);
         }
 
-        window.swap_buffers();
+        ctx.swap_buffers();
     }
 
-
-    fn render_buffer(buffer: &RenderBuffer, vao_id: u32, window_size : (i32, i32)) {
-
-        let out_color_str = CString::new("out_color").unwrap();
-
-        let mvp_str = CString::new("mvp").unwrap();
+    pub fn render_quad_buffer(&mut self, buffer: &mut QuadBuffer, vbo_id: u32, shader_id: u32, window_size: (i32, i32), ctx: &mut RenderContext) {
 
         unsafe {
-            gl::UseProgram(buffer.shader_id);
-            gl::BindFragDataLocation(buffer.shader_id, 0, out_color_str.as_ptr());
-
-            gl::BindBuffer(gl::ARRAY_BUFFER, buffer.vbo_id);
-            gl::BufferData(
-                gl::ARRAY_BUFFER,
-                (buffer.data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                buffer.data.as_ptr() as *const GLvoid,
-                gl::DYNAMIC_DRAW,
-            );
-
-            let mvp = math::array4x4(math::ortho(0.0, window_size.0 as f32, window_size.1 as f32, 0.0, 0.0, 1.0));
-
-            let mvp_attr = gl::GetUniformLocation(buffer.shader_id, mvp_str.as_ptr());
-            gl::UniformMatrix4fv(mvp_attr, 1, gl::FALSE, mvp.as_ptr() as *const f32);
-
-            gl::BindVertexArray(vao_id);
-            for batch in &buffer.batch_data {
-                gl::ActiveTexture(gl::TEXTURE0);
-                bind_texture_by_id(batch.texture_id);
-                gl::DrawArrays(gl::TRIANGLES, batch.start as i32, batch.count as i32);
-            }
+            gl::ClearColor(0.1, 0.1, 0.1, 1.0);
+            gl::Clear(gl::COLOR_BUFFER_BIT);
         }
+
+        render_buffer(buffer, vbo_id, shader_id, self.vao_id, window_size);
+        clear_quad_buffer(buffer);
+
+        ctx.swap_buffers();
     }
+
 
     fn new_quad_buffer(&mut self, shader_id : u32) {
 
@@ -144,11 +132,11 @@ impl Renderer {
         let color_str = CString::new("color").unwrap();
         let texcoord_str = CString::new("texcoord").unwrap();
 
-        let mut vbo = 0;
+        let mut vbo_id = 0;
         unsafe {
             gl::BindVertexArray(self.vao_id);
-            gl::GenBuffers(1, &mut vbo);
-            gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+            gl::GenBuffers(1, &mut vbo_id);
+            gl::BindBuffer(gl::ARRAY_BUFFER, vbo_id);
 
             // Specify layout
             let pos_attr = gl::GetAttribLocation(shader_id, position_str.as_ptr());
@@ -183,39 +171,25 @@ impl Renderer {
                 (5 * mem::size_of::<GLfloat>()) as *const GLvoid,
             );
         }
-        self.buffers.push( RenderBuffer { data: Vec::new(), batch_data: Vec::new(), vbo_id : vbo, shader_id : shader_id });
+        self.buffers.push( RenderBuffer { quads: QuadBuffer::new(), vbo_id, shader_id});
     }
 
-    fn add_to_buffer(&mut self, data: &mut Vec<f32>, texture_id: u32) {
+    fn add_to_buffer(&mut self, array: &mut Vec<f32>, texture_id: u32) {
         let buff : &mut RenderBuffer = self.buffers.first_mut().unwrap();
 
         let thing_per_vertex = 7;
-
         let batch_info = RenderBatch {
-            start: buff.data.len() / thing_per_vertex,
-            count: data.len() / thing_per_vertex,
+            start: buff.quads.array.len() / thing_per_vertex,
+            count: array.len() / thing_per_vertex,
             texture_id,
         };
 
-        buff.data.append(data);
-        buff.batch_data.push(batch_info);
+        buff.quads.array.append(array);
+        buff.quads.batch_data.push(batch_info);
     }
 
-    pub fn load_textures<P: AsRef<Path>>(&mut self, path: P) {
-        if let Err(s) = self.textures.load_textures(path) {
-            println!("Failed to load textures: {}", s);
-        }
-    }
-
-    pub fn get_texture_id(&self, texture_name: &str) -> u32 {
-        if let Some(texture_id) = self.textures.get_texture_id(texture_name) {
-            return texture_id;
-        }
-        0
-    }
-
-    pub fn add_quad(&mut self, position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>, texture_id: u32) {
-        let mut v = vec![
+    pub fn quad_as_vec(position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>) -> Vec<f32> {
+        vec![
             position.x, position.y,
             color.x, color.y, color.z,
             0.0, 1.0,
@@ -234,12 +208,57 @@ impl Renderer {
             position.x + size.x, position.y,
             color.x, color.y, color.z,
             1.0, 1.0,
-        ];
+        ]
+    }
+
+    pub fn add_quad(&mut self, position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>, texture_id: u32) {
+        let mut v = Renderer::quad_as_vec(position, size, color);
         self.add_to_buffer(&mut v, texture_id);
     }
 
-    pub fn get_white_id(&self) -> u32 {
-        self.textures.get_white_id()
+    pub fn add_quad_to_buffer(buffer: &mut QuadBuffer, position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>, texture_id: u32) {
+        let mut arr = Renderer::quad_as_vec(position, size, color);
+
+        let thing_per_vertex = 7;
+        let batch_info = RenderBatch {
+            start: buffer.array.len() / thing_per_vertex,
+            count: arr.len() / thing_per_vertex,
+            texture_id,
+        };
+
+        buffer.array.append(&mut arr);
+        buffer.batch_data.push(batch_info);
+    }
+}
+
+fn render_buffer(buffer: &QuadBuffer, vbo_id: u32, shader_id: u32, vao_id: u32, window_size : (i32, i32)) {
+
+    let out_color_str = CString::new("out_color").unwrap();
+    let mvp_str = CString::new("mvp").unwrap();
+
+    unsafe {
+        gl::UseProgram(shader_id);
+        gl::BindFragDataLocation(shader_id, 0, out_color_str.as_ptr());
+
+        gl::BindBuffer(gl::ARRAY_BUFFER, vbo_id);
+        gl::BufferData(
+            gl::ARRAY_BUFFER,
+            (buffer.array.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+            buffer.array.as_ptr() as *const GLvoid,
+            gl::DYNAMIC_DRAW,
+        );
+
+        let mvp = math::array4x4(math::ortho(0.0, window_size.0 as f32, window_size.1 as f32, 0.0, 0.0, 1.0));
+
+        let mvp_attr = gl::GetUniformLocation(shader_id, mvp_str.as_ptr());
+        gl::UniformMatrix4fv(mvp_attr, 1, gl::FALSE, mvp.as_ptr() as *const f32);
+
+        gl::BindVertexArray(vao_id);
+        for batch in &buffer.batch_data {
+            gl::ActiveTexture(gl::TEXTURE0);
+            bind_texture_by_id(batch.texture_id);
+            gl::DrawArrays(gl::TRIANGLES, batch.start as i32, batch.count as i32);
+        }
     }
 }
 

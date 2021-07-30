@@ -4,7 +4,10 @@ pub mod file;
 
 use std::{str, fmt};
 use engine::renderer;
-pub use self::glfw::{Action, Key};
+pub use self::glfw::{Action, Key, RenderContext, Context};
+
+#[derive(Default)]
+pub struct WindowSize(pub i32, pub i32);
 
 pub struct Platform
 {
@@ -59,6 +62,11 @@ impl Platform {
         window.set_framebuffer_size_polling(true);
         window.set_mouse_button_polling(true);
         window.set_cursor_pos_polling(true);
+
+        // Make the window's context current
+        renderer::get_proc_address(&mut window);
+        window.make_current();
+        window.glfw.set_swap_interval(glfw::SwapInterval::Sync(1));
 
         file::image::setup();
 

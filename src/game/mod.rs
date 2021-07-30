@@ -1,4 +1,3 @@
-mod world;
 mod components;
 mod systems;
 
@@ -7,11 +6,16 @@ use std::error::Error;
 use crate::rand::{self, Rng};
 
 use engine::{
+    texture::{TextureStorage},
+    platform::{RenderContext, WindowSize},
     ecs::{
         World, WorldExt, Builder, Dispatcher, DispatcherBuilder,
     },
-    math::{Point2, Vector2},
-    renderer::{Renderer},
+    math::{Point2, Vector2, Vector3},
+    renderer::{
+        Renderer,
+        systems::{RenderSystem, SpriteSystem, QuadBuffer},
+    },
 };
 
 use self::{
@@ -24,6 +28,7 @@ pub use engine::platform::MouseButtonState;
 #[derive(Default, Debug)]
 pub struct FrameData {
     pub delta_time: f64,
+    pub window_size: (i32, i32),
     pub cursor_x: f64,
     pub cursor_y: f64,
     pub mouse_state: MouseButtonState,
@@ -33,7 +38,6 @@ pub struct FrameData {
 pub struct DeltaTime(f32);
 
 pub struct CursorPos(Point2<f32>);
-
 impl Default for CursorPos {
     fn default() -> Self {
         CursorPos(Point2::new(0.0,0.0))
@@ -47,14 +51,17 @@ pub struct Game<'a> {
 
 impl<'a> Game<'a> {
 
-    pub fn new() -> Result<Game<'a>, Box<dyn Error>> {
+    pub fn new(render_context: RenderContext, textures: &TextureStorage) -> Result<Game<'a>, Box<dyn Error>> {
 
         let mut world = World::new();
         let mut rng = rand::thread_rng();
 
-        world.insert(DeltaTime(Default::default()));
+        world.insert(DeltaTime::default());
+        world.insert(WindowSize::default());
         world.insert(CursorPos::default());
         world.insert(MouseButtonState::default());
+
+        world.insert(QuadBuffer::default());
 
 
         world.register::<Position>();
@@ -65,25 +72,31 @@ impl<'a> Game<'a> {
 
         world.register::<FollowingMouse>();
 
-        for _ in 1..5000 {
+        let mut dispatcher = DispatcherBuilder::new()
+            .with(FollowMouse, "follow_mouse", &[])
+            .with(Repelled, "repelled", &[])
+            .with(UpdatePosition, "update_position", &["follow_mouse", "repelled"])
+            .with(SpriteSystem, "sprite_system", &[])
+            .with_thread_local(RenderSystem::new(render_context))
+            .build();
+
+
+        textures.push_loaded_textures();
+
+        for _ in 1..50000 {
             let pos = Position( Point2::new( rng.gen_range(0.0..800.0), rng.gen_range(0.0..800.0)));
             let vel = Velocity( Vector2::new( rng.gen_range(-10.0..10.0), rng.gen_range(-10.0..10.0)));
-            let size = Size( Vector2::new(20.0, 20.0));
-            let texture = Texture( "auringonkukka.png".to_string());
+            let color = Color( Vector3::new( rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
+            let size = Size( Vector2::new(20.0, 40.0));
+            let texture = Texture( textures.get_texture_id("auringonkukka.png").expect("Failed to load texture!"));
             world.create_entity()
                 .with(pos)
                 .with(vel) 
                 .with(size)
                 .with(texture)
+                .with(color)
                 .build();
         }
-
-        let mut dispatcher = DispatcherBuilder::new()
-            .with(FollowMouse, "follow_mouse", &[])
-            .with(Repelled, "repelled", &[])
-            .with(UpdatePosition, "update_position", &["follow_mouse", "repelled"])
-            .with(SpriteSystem, "sprite_system", &["update_position"])
-            .build();
 
         Ok(Game {
             world,
@@ -96,6 +109,7 @@ impl<'a> Game<'a> {
         let world = &self.world;
 
         *world.write_resource::<DeltaTime>() = DeltaTime(data.delta_time as f32);
+        *world.write_resource::<WindowSize>() = WindowSize(data.window_size.0, data.window_size.1);
         *world.write_resource::<CursorPos>() = CursorPos(Point2::new(data.cursor_x as f32, data.cursor_y as f32));
         *world.write_resource::<MouseButtonState>() = data.mouse_state;
 

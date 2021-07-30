@@ -8,7 +8,10 @@ use std::{
     path::Path,
 };
 
-use engine::*;
+use engine::{
+    *,
+    texture::{TextureStorage},
+};
 
 use platform::Platform;
 use renderer::Renderer;
@@ -36,9 +39,12 @@ impl Config {
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let mut platform = Platform::new(&config.program_name, config.window_width, config.window_height);
-    let mut renderer = Renderer::new(&mut platform.window);
-    renderer.load_textures(Path::new(&config.asset_path).join("textures"));
-    let mut game = Game::new()?;
+
+    let mut textures = TextureStorage::new();
+    let texture_path = Path::new(&config.asset_path).join("textures");
+    textures.load_textures_from_path(texture_path);
+
+    let mut game = Game::new(platform.window.render_context(), &textures)?;
 
     let mut frame_stop: f64 = 0.0;
     let mut frame_start: f64 = 0.0;
@@ -60,16 +66,17 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         let (cursor_x, cursor_y) = platform.get_cursor_pos();
         let mouse_state = platform.get_mouse_state();
 
+        let window_size = platform.window.get_size();
+
         let frame_data = game::FrameData {
             delta_time,
+            window_size,
             cursor_x,
             cursor_y,
             mouse_state,
         };
 
         game.update(frame_data);
-
-        renderer.render(&mut platform.window);
 
         platform.poll_events();
         frame_stop = platform.get_time();

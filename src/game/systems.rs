@@ -8,7 +8,6 @@ use {
             System, Read, Write, ReadStorage, WriteStorage, Join,
         },
         math::{MetricSpace},
-        renderer::{Renderer},
         platform::Action,
     },
 };
@@ -67,11 +66,11 @@ impl<'a> System<'a> for Repelled {
             let dir = pos.0 - cursor_pos.0;
             let lmb = mouse_state.left;
 
-            if let lmb = Action::Release {
+            if lmb == Action::Press {
                 if pos.0.distance2(cursor_pos.0) < attract_radius2 {
                     vel.0 = - dir / 5.0;
                 }
-            } else if let lmb = Action::Press {
+            } else if lmb == Action::Release {
                 if pos.0.distance2(cursor_pos.0) < repel_radius2 {
                     vel.0 += dir;
                 }
@@ -80,25 +79,3 @@ impl<'a> System<'a> for Repelled {
     }
 }
 
-
-pub struct SpriteSystem;
-impl<'a> System<'a> for SpriteSystem {
-    type SystemData = 
-        (ReadStorage<'a, Position>,
-         ReadStorage<'a, Size>,
-         ReadStorage<'a, Texture>,
-         ReadStorage<'a, Color>);
-
-    fn run(&mut self, (poss, sizes, txtrs, cols): Self::SystemData) {
-        for (pos, size, txtr, col) in (&poss, &sizes, &txtrs, &cols).join() {
-            //renderer.add_quad(pos.0, size.0, col.0, {
-                //if txtr.0.is_empty() {
-                    //renderer.get_white_id()
-                //}
-                //else {
-                    //renderer.get_texture_id(txtr)
-                //}
-            //});
-        }
-    }
-}
