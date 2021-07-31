@@ -7,7 +7,6 @@ pub mod components;
 
 use std::{
     mem, ptr,
-    path::Path,
     ffi::CString,
 };
 

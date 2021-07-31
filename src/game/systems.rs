@@ -52,12 +52,11 @@ pub struct Repelled;
 impl<'a> System<'a> for Repelled {
     type SystemData =
         (Read<'a, CursorPos>,
-         Read<'a, DeltaTime>,
          Read<'a, MouseButtonState>,
          ReadStorage<'a, Position>,
          WriteStorage<'a, Velocity>);
 
-    fn run(&mut self, (cursor_pos, delta_time, mouse_state, positions, mut velocities): Self::SystemData) {
+    fn run(&mut self, (cursor_pos, mouse_state, positions, mut velocities): Self::SystemData) {
 
         let repel_radius2 = 2500f32;
         let attract_radius2 = 10000f32;

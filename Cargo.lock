@@ -433,6 +433,7 @@ dependencies = [
  "gl",
  "glfw",
  "rand",
+ "soloud",
  "specs",
  "stb_image",
 ]
@@ -483,6 +484,37 @@ name = "smallvec"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fe0f37c9e8f3c5a4a66ad655a93c74daac4ad00c441533bf5c6e7990bb42604e"
+
+[[package]]
+name = "soloud"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "02f356118ae7a3c0e8fc0be2d32b29185115e020bb9f6b26adb7d085fca18234"
+dependencies = [
+ "bitflags",
+ "soloud-derive",
+ "soloud-sys",
+]
+
+[[package]]
+name = "soloud-derive"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1552552e88cf0e59029c9ca4c1141eb8f25e85ad6752efc7933470d7e738fc92"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "soloud-sys"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fa6c83f42ba2657484a9b1859a81ca2204f15ffce0f489f2ef758ba99cccde1"
+dependencies = [
+ "cmake",
+ "libc",
+]
 
 [[package]]
 name = "specs"

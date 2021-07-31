@@ -1,5 +1,5 @@
 use engine:: {
-    platform::{RenderContext, Context, WindowSize},
+    platform::{RenderContext, WindowSize},
     components::*,
     ecs::{World, System, SystemData, Read, Write, ReadStorage},
 };

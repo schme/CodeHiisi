@@ -1,19 +1,22 @@
 mod components;
 mod systems;
 
-use std::error::Error;
+use std::{
+    error::Error,
+    path::Path,
+};
 
 use crate::rand::{self, Rng};
 
 use engine::{
-    texture::{TextureStorage},
+    assets::{TextureStorage},
+    audio::{AudioStorage, AudioSystem, AudioQueue},
     platform::{RenderContext, WindowSize},
     ecs::{
         World, WorldExt, Builder, Dispatcher, DispatcherBuilder,
     },
     math::{Point2, Vector2, Vector3},
     renderer::{
-        Renderer,
         systems::{RenderSystem, SpriteSystem, QuadBuffer},
     },
 };
@@ -51,7 +54,7 @@ pub struct Game<'a> {
 
 impl<'a> Game<'a> {
 
-    pub fn new(render_context: RenderContext, textures: &TextureStorage) -> Result<Game<'a>, Box<dyn Error>> {
+    pub fn new(render_context: RenderContext, textures: &TextureStorage, audio_path: &Path) -> Result<Game<'a>, Box<dyn Error>> {
 
         let mut world = World::new();
         let mut rng = rand::thread_rng();
@@ -62,6 +65,7 @@ impl<'a> Game<'a> {
         world.insert(MouseButtonState::default());
 
         world.insert(QuadBuffer::default());
+        world.insert(AudioQueue::default());
 
 
         world.register::<Position>();
@@ -72,18 +76,21 @@ impl<'a> Game<'a> {
 
         world.register::<FollowingMouse>();
 
-        let mut dispatcher = DispatcherBuilder::new()
+        let audio_system = AudioSystem::new(&audio_path);
+
+        let dispatcher = DispatcherBuilder::new()
             .with(FollowMouse, "follow_mouse", &[])
             .with(Repelled, "repelled", &[])
             .with(UpdatePosition, "update_position", &["follow_mouse", "repelled"])
             .with(SpriteSystem, "sprite_system", &[])
+            .with_thread_local(audio_system)
             .with_thread_local(RenderSystem::new(render_context))
             .build();
 
 
         textures.push_loaded_textures();
 
-        for _ in 1..50000 {
+        for _ in 1..5_000 {
             let pos = Position( Point2::new( rng.gen_range(0.0..800.0), rng.gen_range(0.0..800.0)));
             let vel = Velocity( Vector2::new( rng.gen_range(-10.0..10.0), rng.gen_range(-10.0..10.0)));
             let color = Color( Vector3::new( rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));

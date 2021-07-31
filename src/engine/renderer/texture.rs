@@ -1,6 +1,6 @@
 use {
     renderer::gl::types::*,
-    texture::{Texture},
+    assets::{Texture},
 };
 
 pub fn load_texture(texture: &Texture) {

@@ -6,5 +6,7 @@ pub mod ecs;
 pub mod components;
 //pub mod systems;
 
-pub mod texture;
+pub mod assets;
+pub mod audio;
 
+pub use assets::*;

@@ -10,11 +10,10 @@ use std::{
 
 use engine::{
     *,
-    texture::{TextureStorage},
+    assets::{TextureStorage},
 };
 
 use platform::Platform;
-use renderer::Renderer;
 
 use game::Game;
 
@@ -41,10 +40,13 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut platform = Platform::new(&config.program_name, config.window_width, config.window_height);
 
     let mut textures = TextureStorage::new();
-    let texture_path = Path::new(&config.asset_path).join("textures");
-    textures.load_textures_from_path(texture_path);
 
-    let mut game = Game::new(platform.window.render_context(), &textures)?;
+    let texture_path = Path::new(&config.asset_path).join("textures");
+    let audio_path = Path::new(&config.asset_path).join("audio");
+
+    textures.load_textures_from_path(texture_path)?;
+
+    let mut game = Game::new(platform.window.render_context(), &textures, &audio_path)?;
 
     let mut frame_stop: f64 = 0.0;
     let mut frame_start: f64 = 0.0;

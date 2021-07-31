@@ -1,5 +1,5 @@
 use engine::{
-    texture::{TextureId},
+    assets::{TextureId},
     ecs::{Component, VecStorage},
     math::{Vector3},
 };
