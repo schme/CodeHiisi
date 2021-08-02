@@ -4,11 +4,20 @@ version = "0.1.0"
 authors = ["kasper"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
 [dependencies]
 rand = "*"
 glfw = "*"
 gl = "*"
 stb_image = "*"
-soloud = "*"
 specs = { version = "*", features = ["specs-derive"] }
 cgmath = { version = "*", features = ["swizzle"] }
+
+
+# No idea what's going on here. 
+
+[target.'cfg(target_os="linux")'.dependencies]
+soloud = { version = "*", default-features = false, features = ["alsa"] }
+
+#[target.'cfg(target_os="windows")'.dependencies]
+#soloud = { version = "*" }

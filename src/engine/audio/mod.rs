@@ -142,7 +142,7 @@ pub mod systems {
         pub fn new<P: AsRef<Path>>(audio_path: P) -> Self {
             AudioSystem {
                 engine: Box::new(AudioEngine::new(audio_path)),
-                music_playing: false,
+                music_playing: true, //MUTE MUSIC
             }
         }
 
@@ -161,6 +161,9 @@ pub mod systems {
                 if let Some(id) = storage.get_id_by_name("BallGame.wav") {
                     self.engine.play_cue_by_id(*id);
                     self.music_playing = true;
+                }
+                else {
+                    println!("Couldn't find audio/BallGame.wav!");
                 }
             }
         }
