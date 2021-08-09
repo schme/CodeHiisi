@@ -30,7 +30,6 @@ impl Default for AppConfig {
     fn default() -> Self {
         AppConfig {
             name: "Hiisi Engine".to_string(),
-            asset_path: "../assets/".to_string(),
             window_size: (800, 600),
         }
     }
@@ -43,14 +42,15 @@ impl App {
     }
 
     pub fn run(self) -> Result<(), Box<dyn Error>> {
+        use std::env;
+
+        let current_dir = env::current_dir()?;
+        let asset_path = String::from(current_dir.join("assets").to_str().expect("Could not parse current directory"));
+        let texture_path = Path::new(&asset_path).join("textures");
+        let audio_path = Path::new(&asset_path).join("audio");
 
         let mut platform = Platform::new(&self.config.name, self.config.window_size);
         let mut textures = TextureStorage::new();
-
-        let asset_path = &self.config.asset_path;
-
-        let texture_path = Path::new(&asset_path).join("textures");
-        let audio_path = Path::new(&asset_path).join("audio");
 
         textures.load_textures_from_path(texture_path)?;
 
