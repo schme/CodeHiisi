@@ -1,0 +1,7 @@
+/x/koodi/rustyray/hiisi/target/debug/build/soloud-sys-d406f77b0a244258/out/build/CMakeFiles/install/strip.dir
+/x/koodi/rustyray/hiisi/target/debug/build/soloud-sys-d406f77b0a244258/out/build/CMakeFiles/install/local.dir
+/x/koodi/rustyray/hiisi/target/debug/build/soloud-sys-d406f77b0a244258/out/build/CMakeFiles/install.dir
+/x/koodi/rustyray/hiisi/target/debug/build/soloud-sys-d406f77b0a244258/out/build/CMakeFiles/list_install_components.dir
+/x/koodi/rustyray/hiisi/target/debug/build/soloud-sys-d406f77b0a244258/out/build/CMakeFiles/rebuild_cache.dir
+/x/koodi/rustyray/hiisi/target/debug/build/soloud-sys-d406f77b0a244258/out/build/CMakeFiles/edit_cache.dir
+/x/koodi/rustyray/hiisi/target/debug/build/soloud-sys-d406f77b0a244258/out/build/CMakeFiles/soloud.dir

@@ -1,0 +1,8 @@
+/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/include/GLFW/glfw3.h
+/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/include/GLFW/glfw3native.h
+/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/lib/cmake/glfw3/glfw3Config.cmake
+/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/lib/cmake/glfw3/glfw3ConfigVersion.cmake
+/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/lib/cmake/glfw3/glfw3Targets.cmake
+/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/lib/cmake/glfw3/glfw3Targets-debug.cmake
+/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/lib/pkgconfig/glfw3.pc
+/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/lib/libglfw3.a

@@ -1,0 +1,13 @@
+prefix=/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out
+exec_prefix=${prefix}
+includedir=/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/include
+libdir=/x/koodi/rustyray/hiisi/target/debug/build/glfw-sys-2941a797756d3a46/out/lib
+
+Name: GLFW
+Description: A multi-platform library for OpenGL, window and input
+Version: 3.3.4
+URL: https://www.glfw.org/
+Requires.private:  x11
+Libs: -L${libdir} -lglfw3
+Libs.private:  -lrt -lm -ldl
+Cflags: -I${includedir}
