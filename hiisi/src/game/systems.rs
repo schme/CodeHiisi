@@ -20,7 +20,7 @@ impl<'a> System<'a> for UpdatePosition {
                         ReadStorage<'a, Velocity>);
 
     fn run(&mut self, (delta, mut pos, vel): Self::SystemData) {
-        use ecs::specs::rayon::prelude::*;
+        use ecs::parallel::prelude::*;
         use ecs::ParJoin;
 
         let dt = delta.0;

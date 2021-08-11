@@ -3,20 +3,25 @@ use std::{
     process,
 };
 
-use hiisi::app::{App, AppConfig};
+use hiisi::{
+    prelude::*,
+    app::{App, AppConfig},
+    ecs::{World, WorldExt},
+};
 
 fn main() -> std::io::Result<()> {
 
-    let current_dir = env::current_dir()?;
-
-    let name = "Hiisi Game".to_string();
-    let window_size = (800, 800);
-
     let config = AppConfig {
-        name, window_size
+        name: "Hiisi Game".to_string(),
+        window_size: (800, 800),
     };
 
-    let app = App::new(config);
+
+    let mut world = World::new();
+
+    let mut app = App::builder(config)
+        .with_plugin(&mut world, CorePlugin)
+        .build(world);
 
     if let Err(e) = app.run() {
         println!("Application error: {}", e);
