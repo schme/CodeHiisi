@@ -88,35 +88,9 @@ impl<'a, 'b> App<'a, 'b> {
 
     pub fn run(mut self) -> Result<(), Box<dyn Error>> {
 
-
-
         let asset_path = utils::get_asset_path()?;
         let texture_path = Path::new(&asset_path).join("textures");
         let mut textures = TextureAssets::new(String::from(texture_path.to_str().expect("Could not parse texture directory")));
-
-        {
-            use game::*;
-            use app::rand::{Rng};
-
-            let world = &mut self.world;
-            let mut rng = rand::thread_rng();
-
-            for _ in 1..10_000 {
-                let pos = Position( Point2::new( rng.gen_range(0.0..800.0), rng.gen_range(0.0..800.0)));
-                let vel = Velocity( Vector2::new( rng.gen_range(-10.0..10.0), rng.gen_range(-10.0..10.0)));
-                let color = Color( Vector3::new( rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
-                let size = Size( Vector2::new(20.0, 40.0));
-                let texture = Texture( textures.get_texture_id("auringonkukka.png").expect("Failed to load texture!"));
-                world.create_entity()
-                    .with(pos)
-                    .with(vel) 
-                    .with(size)
-                    .with(texture)
-                    .with(color)
-                    .build();
-            }
-        }
-
         self.world.insert(textures);
 
         PlatformRunner::new(self.config)

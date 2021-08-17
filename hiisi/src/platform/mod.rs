@@ -9,6 +9,7 @@ use std::{str, fmt};
 
 pub use self::events::{PlatformEventSystem};
 pub use self::window::{WindowSystem};
+pub use self::systems::{DeltaTime};
 
 pub use self::glfw::{RenderContext, Context};
 pub use self::glfw::{

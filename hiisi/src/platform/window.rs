@@ -1,5 +1,7 @@
 extern crate glfw;
 
+use std::sync::Mutex;
+
 pub use self::glfw::WindowEvent;
 use platform::{MouseButtonState, WindowSize};
 
@@ -30,6 +32,12 @@ impl<'a> System<'a> for WindowSystem {
 
         let (width, height) = self.window.get_framebuffer_size();
         *window_size = WindowSize(width, height);
+
+        *mbs = MouseButtonState {
+            left: self.window.get_mouse_button(glfw::MouseButtonLeft),
+            right: self.window.get_mouse_button(glfw::MouseButtonRight),
+            middle: self.window.get_mouse_button(glfw::MouseButtonMiddle),
+        };
 
         self.window.swap_buffers();
     }

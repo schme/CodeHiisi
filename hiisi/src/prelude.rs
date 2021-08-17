@@ -1,6 +1,6 @@
 pub use {
     app::{App, AppConfig},
-    ecs::{World, WorldExt, System, Plugin, DispatcherBuilder},
+    ecs::{World, WorldExt, System, Builder, Read, Write, Plugin},
     platform::{
         systems::{
             Timer,
@@ -15,6 +15,7 @@ pub use {
 
 use {
     renderer::systems::{SpriteSystem},
+    ecs::{DispatcherBuilder},
 };
 
 pub struct WindowPlugin;
@@ -37,7 +38,6 @@ pub struct CorePlugin;
 impl Plugin for CorePlugin {
     fn load(&mut self, world: &mut World, dispatcher: &mut DispatcherBuilder, config: &AppConfig) {
 
-        use game::FollowingMouse;
         use renderer::components::{Color, Texture};
         use renderer::systems::{RenderSystem};
         use components::*;
@@ -47,7 +47,6 @@ impl Plugin for CorePlugin {
         world.register::<Size>();
         world.register::<Texture>();
         world.register::<Color>();
-        world.register::<FollowingMouse>();
 
         dispatcher.add_thread_local(Timer::new());
         WindowPlugin.load(world, dispatcher, config);

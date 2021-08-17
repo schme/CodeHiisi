@@ -11,7 +11,7 @@ impl Component for Color {
 }
 
 #[derive(Debug, Default)]
-pub struct Texture(pub TextureId);
+pub struct Texture(pub String);
 impl Component for Texture {
     type Storage = VecStorage<Self>;
 }

@@ -40,6 +40,8 @@ impl<'a> System<'a> for Timer {
 
         delta.0 = self.prev_instant.unwrap().elapsed().as_secs_f32();
         self.prev_instant = Some(Instant::now());
+
+        println!("{}", delta.0);
     }
 }
 
@@ -52,7 +54,6 @@ impl PlatformRunner {
     pub fn new(config: AppConfig) -> Self {
         PlatformRunner {}
     }
-
 
     pub fn run_loop(mut self, mut world: World, mut dispatcher_builder: DispatcherBuilder) -> Result<(), Box<dyn Error>> {
 
@@ -68,9 +69,6 @@ impl PlatformRunner {
                 break;
             }
         }
-
-
-
 
         Ok(())
     }

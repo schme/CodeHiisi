@@ -10,9 +10,9 @@ use std::{
     ffi::CString,
 };
 
-use crate::{
+use {
+    assets::{RenderId},
     math::{self, Point2, Vector2, Vector3},
-    platform::{RenderContext, Context},
 };
 
 use self::{
@@ -70,7 +70,6 @@ impl Renderer {
     pub fn new() -> Renderer {
 
         let mut vao = 0;
-
         let program = opengl::make_temp_shader();
 
         unsafe {
@@ -95,7 +94,7 @@ impl Renderer {
         (quad_buffer.vbo_id, quad_buffer.shader_id)
     }
 
-    pub fn render(&mut self, window_size: (i32, i32), ctx: &mut RenderContext) {
+    pub fn render(&mut self, window_size: (i32, i32)) {
 
         unsafe {
             gl::ClearColor(0.1, 0.1, 0.1, 1.0);
@@ -107,11 +106,9 @@ impl Renderer {
                 self.vao_id, window_size);
             clear_quad_buffer(&mut buffer.quads);
         }
-
-        ctx.swap_buffers();
     }
 
-    pub fn render_quad_buffer(&mut self, buffer: &mut QuadBuffer, vbo_id: u32, shader_id: u32, window_size: (i32, i32), ctx: &mut RenderContext) {
+    pub fn render_quad_buffer(&mut self, buffer: &mut QuadBuffer, vbo_id: u32, shader_id: u32, window_size: (i32, i32)) {
 
         unsafe {
             gl::ClearColor(0.1, 0.1, 0.1, 1.0);
@@ -120,8 +117,6 @@ impl Renderer {
 
         render_buffer(buffer, vbo_id, shader_id, self.vao_id, window_size);
         clear_quad_buffer(buffer);
-
-        ctx.swap_buffers();
     }
 
 
@@ -215,7 +210,7 @@ impl Renderer {
         self.add_to_buffer(&mut v, texture_id);
     }
 
-    pub fn add_quad_to_buffer(buffer: &mut QuadBuffer, position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>, texture_id: u32) {
+    pub fn add_quad_to_buffer(buffer: &mut QuadBuffer, position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>, texture_id: RenderId) {
         let mut arr = Renderer::quad_as_vec(position, size, color);
 
         let thing_per_vertex = 7;

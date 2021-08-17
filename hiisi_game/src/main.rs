@@ -1,12 +1,28 @@
+extern crate rand;
+
+pub mod components;
+pub mod systems;
+
 use std::{
     env,
     process,
 };
 
+use rand::{Rng, thread_rng};
+
 use hiisi::{
+    math::*,
     prelude::*,
+    components::*,
     app::{App, AppConfig},
     ecs::{World, WorldExt},
+    game::{UpdatePosition},
+    renderer::components::*,
+};
+
+use {
+    components::*,
+    systems::*,
 };
 
 fn main() -> std::io::Result<()> {
@@ -16,11 +32,45 @@ fn main() -> std::io::Result<()> {
         window_size: (800, 800),
     };
 
-
     let mut world = World::new();
 
-    let mut app = App::builder(config)
+    world.register::<FollowingMouse>();
+
+    {
+        world.register::<Position>();
+        world.register::<Velocity>();
+        world.register::<Size>();
+        world.register::<Texture>();
+        world.register::<Color>();
+    }
+
+    world.create_entity()
+        .with(Position( Point2::new(100.0, 100.0)))
+        .with(Size( Vector2::new(200.0, 200.0)))
+        .with(Texture( "kivi.png".to_string()))
+        .with(Color( Vector3::new(1.0, 1.0, 1.0)))
+        .build();
+
+    let mut rng = rand::thread_rng();
+    for _ in 1..10_000 {
+        let pos = Position( Point2::new( rng.gen_range(0.0..800.0), rng.gen_range(0.0..800.0)));
+        let vel = Velocity( Vector2::new( rng.gen_range(-10.0..10.0), rng.gen_range(-10.0..10.0)));
+        let color = Color( Vector3::new( rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0), rng.gen_range(0.0..1.0)));
+        let size = Size( Vector2::new(20.0, 40.0));
+        let texture = Texture("auringonkukka.png".to_string());
+        world.create_entity()
+            .with(pos)
+            .with(vel) 
+            .with(size)
+            .with(texture)
+            .with(color)
+            .build();
+    }
+    let app = App::builder(config)
         .with_plugin(&mut world, CorePlugin)
+        .with(FollowMouse, "following_mouse", &[])
+        .with(Repelled, "repelled", &[])
+        .with(UpdatePosition, "update_position", &["following_mouse", "repelled"])
         .build(world);
 
     if let Err(e) = app.run() {
