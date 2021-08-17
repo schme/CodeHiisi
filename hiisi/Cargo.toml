@@ -10,7 +10,7 @@ rand = "*"
 glfw = "*"
 gl = "*"
 stb_image = "*"
-specs = { version = "*", features = ["specs-derive"] }
+specs = { version = "*", features = ["shred-derive"] }
 cgmath = { version = "*", features = ["swizzle"] }
 
 

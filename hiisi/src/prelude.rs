@@ -1,28 +1,46 @@
 pub use {
     app::{App, AppConfig},
     ecs::{World, WorldExt, System, Plugin, DispatcherBuilder},
+    platform::{
+        systems::{
+            Timer,
+            ShouldQuit,
+            DeltaTime,
+        },
+    },
+    input::pointer::{
+        CursorPos,
+    },
 };
+
+use {
+    renderer::systems::{SpriteSystem},
+};
+
+pub struct WindowPlugin;
+
+impl Plugin for WindowPlugin {
+    fn load(&mut self, world: &mut World, dispatcher: &mut DispatcherBuilder, config: &AppConfig) {
+        use platform::window::{WindowSystem};
+        use platform::events::{PlatformEventSystem};
+        use platform;
+
+        let (windows, events) = platform::init_window(&config.name, config.window_size);
+
+        dispatcher.add_thread_local(windows);
+        dispatcher.add_thread_local(events);
+    }
+}
 
 pub struct CorePlugin;
 
 impl Plugin for CorePlugin {
-    fn load(&mut self, world: &mut World, dispatcher: &mut DispatcherBuilder) {
+    fn load(&mut self, world: &mut World, dispatcher: &mut DispatcherBuilder, config: &AppConfig) {
 
-        use app::{DeltaTime, MouseButtonState, CursorPos};
-        use platform::{WindowSize};
-        use audio::{AudioQueue};
-        use renderer::{QuadBuffer};
         use game::FollowingMouse;
         use renderer::components::{Color, Texture};
+        use renderer::systems::{RenderSystem};
         use components::*;
-
-        world.insert(ShouldQuit::default());
-        world.insert(DeltaTime::default());
-        world.insert(WindowSize::default());
-        world.insert(CursorPos::default());
-        world.insert(MouseButtonState::default());
-        world.insert(QuadBuffer::default());
-        world.insert(AudioQueue::default());
 
         world.register::<Position>();
         world.register::<Velocity>();
@@ -30,8 +48,11 @@ impl Plugin for CorePlugin {
         world.register::<Texture>();
         world.register::<Color>();
         world.register::<FollowingMouse>();
+
+        dispatcher.add_thread_local(Timer::new());
+        WindowPlugin.load(world, dispatcher, config);
+        dispatcher.add_thread_local(SpriteSystem);
+        dispatcher.add_thread_local(RenderSystem::new());
     }
 }
 
-#[derive(Default)]
-pub struct ShouldQuit(pub bool);

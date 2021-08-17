@@ -1,15 +1,16 @@
 use {
     game::{
-        DeltaTime, CursorPos, MouseButtonState,
         components::*,
     },
     crate::{
+        prelude::*,
         ecs::{
             System, Read, Write, ReadStorage, WriteStorage, Join,
         },
         components::*,
         math::{MetricSpace},
-        platform::Action,
+        platform::{Action, MouseButtonState},
+        input::pointer,
     },
 };
 
@@ -38,7 +39,7 @@ pub struct FollowMouse;
 impl<'a> System<'a> for FollowMouse {
     type SystemData =
         (ReadStorage<'a, FollowingMouse>,
-        Read<'a, CursorPos>,
+        Read<'a, pointer::CursorPos>,
         WriteStorage<'a, Position>);
 
     fn run(&mut self, (follow, cursor_pos, mut positions): Self::SystemData) {
@@ -52,7 +53,7 @@ impl<'a> System<'a> for FollowMouse {
 pub struct Repelled;
 impl<'a> System<'a> for Repelled {
     type SystemData =
-        (Read<'a, CursorPos>,
+        (Read<'a, pointer::CursorPos>,
          Read<'a, MouseButtonState>,
          ReadStorage<'a, Position>,
          WriteStorage<'a, Velocity>);

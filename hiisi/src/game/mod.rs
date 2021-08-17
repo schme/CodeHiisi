@@ -7,9 +7,8 @@ use std::{
 };
 
 pub use crate::{
-    assets::{TextureStorage},
+    assets::{TextureAssets},
     audio::{AudioStorage, AudioSystem, AudioQueue},
-    platform::{RenderContext, WindowSize},
     ecs::{
         World, WorldExt, Builder, Dispatcher, DispatcherBuilder, Component, System,
     },
@@ -25,7 +24,3 @@ pub use self::{
     components::*,
     systems::*,
 };
-
-pub use crate::platform::MouseButtonState;
-pub use app::{FrameData, DeltaTime, CursorPos};
-

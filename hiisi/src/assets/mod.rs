@@ -1,3 +1,3 @@
 mod texture;
 
-pub use self::texture::{TextureStorage, Texture, TextureId};
+pub use self::texture::{TextureAssets, Texture, TextureId, RenderId};
