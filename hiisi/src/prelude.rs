@@ -22,6 +22,9 @@ pub struct WindowPlugin;
 
 impl Plugin for WindowPlugin {
     fn load(&mut self, world: &mut World, dispatcher: &mut DispatcherBuilder, config: &AppConfig) {
+
+        log::info!("Loading plugin: WindowPlugin");
+
         use platform::window::{WindowSystem};
         use platform::events::{PlatformEventSystem};
         use platform;
@@ -37,6 +40,8 @@ pub struct CorePlugin;
 
 impl Plugin for CorePlugin {
     fn load(&mut self, world: &mut World, dispatcher: &mut DispatcherBuilder, config: &AppConfig) {
+
+        log::info!("Loading plugin: CorePlugin");
 
         use renderer::components::{Color, Texture};
         use renderer::systems::{RenderSystem};

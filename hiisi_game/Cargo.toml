@@ -8,3 +8,5 @@ edition = "2018"
 [dependencies]
 hiisi = { path = "../hiisi" }
 rand = "*"
+log = "*"
+simplelog = "*"

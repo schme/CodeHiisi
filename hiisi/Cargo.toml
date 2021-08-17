@@ -12,6 +12,7 @@ gl = "*"
 stb_image = "*"
 specs = { version = "*", features = ["shred-derive"] }
 cgmath = { version = "*", features = ["swizzle"] }
+log = "*"
 
 
 # No idea what's going on here. 

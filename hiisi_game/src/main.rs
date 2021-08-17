@@ -1,4 +1,5 @@
 extern crate rand;
+extern crate log;
 
 pub mod components;
 pub mod systems;
@@ -6,7 +7,10 @@ pub mod systems;
 use std::{
     env,
     process,
+    fs::File,
 };
+
+use simplelog::{CombinedLogger, TermLogger, WriteLogger, LevelFilter, Config, TerminalMode, ColorChoice};
 
 use rand::{Rng, thread_rng};
 
@@ -27,10 +31,19 @@ use {
 
 fn main() -> std::io::Result<()> {
 
+    CombinedLogger::init(
+        vec![
+            TermLogger::new(LevelFilter::Debug, Config::default(), TerminalMode::Mixed, ColorChoice::Auto),
+            WriteLogger::new(LevelFilter::Info, Config::default(), File::create("hiisi_game.log").unwrap()),
+        ]
+    ).unwrap();
+
     let config = AppConfig {
         name: "Hiisi Game".to_string(),
         window_size: (800, 800),
     };
+
+    log::info!("HALLOOOO");
 
     let mut world = World::new();
 

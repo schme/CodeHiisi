@@ -41,7 +41,7 @@ impl<'a> System<'a> for Timer {
         delta.0 = self.prev_instant.unwrap().elapsed().as_secs_f32();
         self.prev_instant = Some(Instant::now());
 
-        println!("{}", delta.0);
+        log::trace!("{}", delta.0);
     }
 }
 

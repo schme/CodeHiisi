@@ -1,7 +1,5 @@
 extern crate glfw;
 
-use std::sync::Mutex;
-
 pub use self::glfw::WindowEvent;
 use platform::{MouseButtonState, WindowSize};
 
@@ -45,6 +43,7 @@ impl<'a> System<'a> for WindowSystem {
 
     fn setup(&mut self, world: &mut World) {
         Self::SystemData::setup(world);
+        log::debug!("Setting up: WindowSystem");
 
         let window = &mut self.window;
 
