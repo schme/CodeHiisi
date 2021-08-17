@@ -21,12 +21,10 @@ use {
 pub struct WindowPlugin;
 
 impl Plugin for WindowPlugin {
-    fn load(&mut self, world: &mut World, dispatcher: &mut DispatcherBuilder, config: &AppConfig) {
+    fn load(&mut self, _world: &mut World, dispatcher: &mut DispatcherBuilder, config: &AppConfig) {
 
         log::info!("Loading plugin: WindowPlugin");
 
-        use platform::window::{WindowSystem};
-        use platform::events::{PlatformEventSystem};
         use platform;
 
         let (windows, events) = platform::init_window(&config.name, config.window_size);

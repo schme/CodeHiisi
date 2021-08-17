@@ -5,14 +5,13 @@ pub mod components;
 pub mod systems;
 
 use std::{
-    env,
     process,
     fs::File,
 };
 
 use simplelog::{CombinedLogger, TermLogger, WriteLogger, LevelFilter, Config, TerminalMode, ColorChoice};
 
-use rand::{Rng, thread_rng};
+use rand::{Rng};
 
 use hiisi::{
     math::*,

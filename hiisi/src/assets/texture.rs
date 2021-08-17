@@ -1,13 +1,7 @@
 use {
-    std::{
-        fs, io,
-        path::Path,
-        collections::HashMap,
-    },
-    platform::file::image::{
-        self, LoadResult
-    },
+    platform::file::image::{self, LoadResult},
     renderer,
+    std::{collections::HashMap, fs, io, path::Path},
 };
 
 pub type TextureId = u32;
@@ -25,14 +19,19 @@ pub struct Texture {
 }
 
 impl TextureAssets {
-
     pub fn new(texture_path: String) -> Self {
         let mut assets = TextureAssets {
             name_map: HashMap::new(),
             data: Vec::new(),
             texture_path,
         };
-        assets.load_textures();
+        if let Err(s) = assets.load_textures() {
+            log::error!(
+                "Failed to load textures from {}: {}",
+                &assets.texture_path,
+                s
+            );
+        }
         assets
     }
 
@@ -56,7 +55,7 @@ impl TextureAssets {
 
         let txtr = image::load(path);
         match txtr {
-            LoadResult::ImageU8(img) =>  {
+            LoadResult::ImageU8(img) => {
                 println!("ImageU8 found at {:?}:", path);
                 println!("{}, {}, {}", img.width, img.height, img.depth);
                 let texture = Texture {
@@ -68,16 +67,15 @@ impl TextureAssets {
 
                 self.data.push(texture);
                 self.name_map.insert(texture_name, id);
-
-            },
+            }
             LoadResult::ImageF32(img) => {
                 println!("ImageF32 found at {:?}:", path);
                 println!("{}, {}, {}", img.width, img.height, img.depth);
                 println!("Discarded!");
-            },
+            }
             LoadResult::Error(s) => {
                 println!("Failed to load image at {:?}: {}", path, s);
-            },
+            }
         }
     }
 
@@ -106,8 +104,7 @@ impl TextureAssets {
                 if let Err(s) = self.load_textures_from_path(&path) {
                     println!("Failed to load textures: {}", s)
                 }
-            }
-            else {
+            } else {
                 self.new_texture(&path);
             }
         }

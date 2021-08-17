@@ -4,7 +4,6 @@ use std::{
     fs, io,
     collections::HashMap,
     path::Path,
-    fmt::Display,
 };
 
 use self::soloud::*;
@@ -22,7 +21,7 @@ pub struct AudioQueue {
 }
 
 pub struct AudioCue {
-    id: AudioCueId,
+    _id: AudioCueId,
     wav_data: Wav,
 }
 
@@ -62,18 +61,18 @@ impl AudioStorage {
     }
 
     pub fn new_cue<P: AsRef<Path>>(&mut self, filename: &P) {
-        let id = self.cue_data.len() as u32;
+        let _id = self.cue_data.len() as u32;
         let mut wav_data = Wav::default();
         wav_data.load(filename).expect("Unable to load audio file");
 
         self.cue_data.push( AudioCue {
-            id, wav_data,
+            _id, wav_data,
         });
 
 
         self.string_map.insert(
             filename.as_ref().file_name().unwrap().to_str().unwrap().to_string(),
-            id);
+            _id);
         println!("Added: {}", filename.as_ref().to_str().unwrap());
     }
 
@@ -128,9 +127,9 @@ pub mod systems {
         path::Path,
     };
 
-    use super::{AudioEngine, AudioStorage, AudioExt, components::*,};
+    use super::{AudioEngine, AudioStorage};
 
-    use ecs::{System, SystemData};
+    use ecs::{System};
 
 
     pub struct AudioSystem {

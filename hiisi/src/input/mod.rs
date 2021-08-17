@@ -1,5 +1,5 @@
 pub mod pointer {
-    use math::{Point2, Vector2};
+    use math::{Point2};
 
     pub struct CursorPos(pub Point2<f32>);
     impl CursorPos {

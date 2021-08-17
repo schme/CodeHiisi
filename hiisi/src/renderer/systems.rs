@@ -1,8 +1,8 @@
 use crate::{
-    platform::{RenderContext, WindowSize},
+    platform::{WindowSize},
     assets::{TextureAssets},
     components::*,
-    ecs::{World, WorldExt, System, SystemData, Read, Write, ReadExpect, ReadStorage},
+    ecs::{World, System, SystemData, Read, Write, ReadExpect, ReadStorage},
 };
 
 pub use super::{

@@ -1,7 +1,6 @@
 use crate::{
-    assets::{TextureId},
     ecs::{Component, VecStorage},
-    math::{Vector3},
+    math::Vector3,
 };
 
 #[derive(Debug)]

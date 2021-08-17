@@ -6,12 +6,12 @@ use std::{
 };
 
 use crate::{
-    ecs::{World, System, RunNow, Dispatcher, DispatcherBuilder, Plugin},
+    ecs::{World, System, RunNow, DispatcherBuilder, Plugin},
     assets::{TextureAssets},
     utils,
 };
 
-use platform::systems::{Timer, PlatformRunner};
+use platform::systems::PlatformRunner;
 
 
 #[derive(Debug)]
@@ -37,7 +37,7 @@ pub struct AppBuilder<'a, 'b> {
 
 impl<'a, 'b> AppBuilder<'a, 'b> {
 
-    pub fn build(self, mut world: World) -> App<'a, 'b> {
+    pub fn build(self, world: World) -> App<'a, 'b> {
         App { config: self.config, dispatcher_builder: self.dispatcher_builder, world }
     }
 
@@ -75,7 +75,7 @@ pub struct App<'a, 'b> {
 }
 
 impl<'a, 'b> App<'a, 'b> {
-    pub fn new(config: AppConfig) -> AppBuilder<'a, 'b> {
+    pub fn new(_config: AppConfig) -> AppBuilder<'a, 'b> {
         todo!()
     }
 
@@ -90,11 +90,11 @@ impl<'a, 'b> App<'a, 'b> {
 
         let asset_path = utils::get_asset_path()?;
         let texture_path = Path::new(&asset_path).join("textures");
-        let mut textures = TextureAssets::new(String::from(texture_path.to_str().expect("Could not parse texture directory")));
+        let textures = TextureAssets::new(String::from(texture_path.to_str().expect("Could not parse texture directory")));
         self.world.insert(textures);
 
         PlatformRunner::new(self.config)
-            .run_loop(self.world, self.dispatcher_builder);
+            .run_loop(self.world, self.dispatcher_builder)?;
 
         println!("Main loop done!");
 

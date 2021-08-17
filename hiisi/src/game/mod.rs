@@ -1,11 +1,6 @@
 mod components;
 mod systems;
 
-use std::{
-    error::Error,
-    path::Path,
-};
-
 pub use crate::{
     assets::{TextureAssets},
     audio::{AudioStorage, AudioSystem, AudioQueue},

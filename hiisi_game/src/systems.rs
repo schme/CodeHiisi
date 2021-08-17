@@ -1,21 +1,20 @@
 use hiisi::{
-    prelude::*,
     components::*,
-    input::*,
-    platform::{events::Action, MouseButtonState},
-    ecs::{ReadStorage, WriteStorage, Join},
+    ecs::{Join, ReadStorage, WriteStorage},
     math::*,
+    platform::{events::Action, MouseButtonState},
+    prelude::*,
 };
 
 use crate::components::*;
 
-
 pub struct FollowMouse;
 impl<'a> System<'a> for FollowMouse {
-    type SystemData =
-        (ReadStorage<'a, FollowingMouse>,
+    type SystemData = (
+        ReadStorage<'a, FollowingMouse>,
         Read<'a, CursorPos>,
-        WriteStorage<'a, Position>);
+        WriteStorage<'a, Position>,
+    );
 
     fn run(&mut self, (follow, cursor_pos, mut positions): Self::SystemData) {
         for (pos, _) in (&mut positions, &follow).join() {
@@ -24,17 +23,16 @@ impl<'a> System<'a> for FollowMouse {
     }
 }
 
-
 pub struct Repelled;
 impl<'a> System<'a> for Repelled {
-    type SystemData =
-        (Read<'a, CursorPos>,
-         Read<'a, MouseButtonState>,
-         ReadStorage<'a, Position>,
-         WriteStorage<'a, Velocity>);
+    type SystemData = (
+        Read<'a, CursorPos>,
+        Read<'a, MouseButtonState>,
+        ReadStorage<'a, Position>,
+        WriteStorage<'a, Velocity>,
+    );
 
     fn run(&mut self, (cursor_pos, mouse_state, positions, mut velocities): Self::SystemData) {
-
         let repel_radius2 = 2500f32;
         let attract_radius2 = 10000f32;
 
@@ -44,7 +42,7 @@ impl<'a> System<'a> for Repelled {
 
             if lmb == Action::Press {
                 if pos.0.distance2(cursor_pos.0) < attract_radius2 {
-                    vel.0 = - dir / 5.0;
+                    vel.0 = -dir / 5.0;
                 }
             } else if lmb == Action::Release {
                 if pos.0.distance2(cursor_pos.0) < repel_radius2 {
@@ -54,4 +52,3 @@ impl<'a> System<'a> for Repelled {
         }
     }
 }
-

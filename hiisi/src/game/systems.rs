@@ -1,4 +1,4 @@
-use ecs::{System, SystemData, Read, WriteStorage, ReadStorage};
+use ecs::{System, Read, WriteStorage, ReadStorage};
 use platform::DeltaTime;
 use components::*;
 

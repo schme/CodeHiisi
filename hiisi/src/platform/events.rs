@@ -29,7 +29,7 @@ impl<'a> System<'a> for PlatformEventSystem {
         Write<'a, ShouldQuit>,
         Write<'a, pointer::CursorPos>);
 
-    fn run(&mut self, (mut channel, mut quit, mut cursor_pos): Self::SystemData) {
+    fn run(&mut self, (_channel, mut quit, mut cursor_pos): Self::SystemData) {
 
         for (_, event) in glfw::flush_messages(&self.events) {
             //println!("{:?}", event);
