@@ -17,6 +17,7 @@ impl<'a> System<'a> for FollowMouse {
     );
 
     fn run(&mut self, (follow, cursor_pos, mut positions): Self::SystemData) {
+        log::trace!("Running FollowMouse");
         for (pos, _) in (&mut positions, &follow).join() {
             *pos = Position(cursor_pos.0);
         }
@@ -33,6 +34,7 @@ impl<'a> System<'a> for Repelled {
     );
 
     fn run(&mut self, (cursor_pos, mouse_state, positions, mut velocities): Self::SystemData) {
+        log::trace!("Running Repelled");
         let repel_radius2 = 2500f32;
         let attract_radius2 = 10000f32;
 

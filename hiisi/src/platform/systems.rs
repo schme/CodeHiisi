@@ -57,12 +57,14 @@ impl PlatformRunner {
         dispatcher.setup(&mut world);
 
         loop {
+            log::trace!("Top of loop");
             dispatcher.dispatch(&world);
             world.maintain();
 
             if world.read_resource::<ShouldQuit>().0 {
                 break;
             }
+            log::trace!("Bottom of loop");
         }
 
         Ok(())

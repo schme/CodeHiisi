@@ -1,28 +1,22 @@
 extern crate gl;
 mod opengl;
 
-pub mod texture;
-pub mod systems;
 pub mod components;
+pub mod systems;
+pub mod texture;
 
-use std::{
-    mem, ptr,
-    ffi::CString,
-};
+use std::{ffi::CString, mem, ptr};
 
 use {
-    assets::{RenderId},
+    assets::RenderId,
     math::{self, Point2, Vector2, Vector3},
 };
 
-use self::{
-    gl::types::*,
-    opengl::*,
-};
+use self::{gl::types::*, opengl::*};
 
 pub use self::{
-    opengl::{resize_viewport, get_proc_address},
-    texture::{load_texture, gen_texture},
+    opengl::{get_proc_address, resize_viewport},
+    texture::{gen_texture, load_texture},
 };
 
 #[derive(Debug, Default)]
@@ -52,7 +46,6 @@ pub fn clear_quad_buffer(buffer: &mut QuadBuffer) {
     buffer.batch_data.clear();
 }
 
-
 #[derive(Debug, Default)]
 struct RenderBuffer {
     quads: QuadBuffer,
@@ -66,9 +59,7 @@ pub struct Renderer {
 }
 
 impl Renderer {
-
     pub fn new() -> Renderer {
-
         let mut vao = 0;
         let program = opengl::make_temp_shader();
 
@@ -95,21 +86,30 @@ impl Renderer {
     }
 
     pub fn render(&mut self, window_size: (i32, i32)) {
-
         unsafe {
             gl::ClearColor(0.1, 0.1, 0.1, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
 
         for buffer in &mut self.buffers {
-            render_buffer(&buffer.quads, buffer.vbo_id, buffer.shader_id,
-                self.vao_id, window_size);
+            render_buffer(
+                &buffer.quads,
+                buffer.vbo_id,
+                buffer.shader_id,
+                self.vao_id,
+                window_size,
+            );
             clear_quad_buffer(&mut buffer.quads);
         }
     }
 
-    pub fn render_quad_buffer(&mut self, buffer: &mut QuadBuffer, vbo_id: u32, shader_id: u32, window_size: (i32, i32)) {
-
+    pub fn render_quad_buffer(
+        &mut self,
+        buffer: &mut QuadBuffer,
+        vbo_id: u32,
+        shader_id: u32,
+        window_size: (i32, i32),
+    ) {
         unsafe {
             gl::ClearColor(0.1, 0.1, 0.1, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT);
@@ -119,9 +119,7 @@ impl Renderer {
         clear_quad_buffer(buffer);
     }
 
-
-    fn new_quad_buffer(&mut self, shader_id : u32) {
-
+    fn new_quad_buffer(&mut self, shader_id: u32) {
         let position_str = CString::new("position").unwrap();
         let color_str = CString::new("color").unwrap();
         let texcoord_str = CString::new("texcoord").unwrap();
@@ -165,11 +163,15 @@ impl Renderer {
                 (5 * mem::size_of::<GLfloat>()) as *const GLvoid,
             );
         }
-        self.buffers.push( RenderBuffer { quads: QuadBuffer::new(), vbo_id, shader_id});
+        self.buffers.push(RenderBuffer {
+            quads: QuadBuffer::new(),
+            vbo_id,
+            shader_id,
+        });
     }
 
     fn add_to_buffer(&mut self, array: &mut Vec<f32>, texture_id: u32) {
-        let buff : &mut RenderBuffer = self.buffers.first_mut().unwrap();
+        let buff: &mut RenderBuffer = self.buffers.first_mut().unwrap();
 
         let thing_per_vertex = 7;
         let batch_info = RenderBatch {
@@ -184,33 +186,69 @@ impl Renderer {
 
     pub fn quad_as_vec(position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>) -> Vec<f32> {
         vec![
-            position.x, position.y,
-            color.x, color.y, color.z,
-            0.0, 1.0,
-            position.x, position.y + size.y,
-            color.x, color.y, color.z,
-            0.0, 0.0,
-            position.x + size.x, position.y,
-            color.x, color.y, color.z,
-            1.0, 1.0,
-            position.x, position.y + size.y,
-            color.x, color.y, color.z,
-            0.0, 0.0,
-            position.x + size.x, position.y + size.y,
-            color.x, color.y, color.z,
-            1.0, 0.0,
-            position.x + size.x, position.y,
-            color.x, color.y, color.z,
-            1.0, 1.0,
+            position.x,
+            position.y,
+            color.x,
+            color.y,
+            color.z,
+            0.0,
+            1.0,
+            position.x,
+            position.y + size.y,
+            color.x,
+            color.y,
+            color.z,
+            0.0,
+            0.0,
+            position.x + size.x,
+            position.y,
+            color.x,
+            color.y,
+            color.z,
+            1.0,
+            1.0,
+            position.x,
+            position.y + size.y,
+            color.x,
+            color.y,
+            color.z,
+            0.0,
+            0.0,
+            position.x + size.x,
+            position.y + size.y,
+            color.x,
+            color.y,
+            color.z,
+            1.0,
+            0.0,
+            position.x + size.x,
+            position.y,
+            color.x,
+            color.y,
+            color.z,
+            1.0,
+            1.0,
         ]
     }
 
-    pub fn add_quad(&mut self, position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>, texture_id: u32) {
+    pub fn add_quad(
+        &mut self,
+        position: Point2<f32>,
+        size: Vector2<f32>,
+        color: Vector3<f32>,
+        texture_id: u32,
+    ) {
         let mut v = Renderer::quad_as_vec(position, size, color);
         self.add_to_buffer(&mut v, texture_id);
     }
 
-    pub fn add_quad_to_buffer(buffer: &mut QuadBuffer, position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>, texture_id: RenderId) {
+    pub fn add_quad_to_buffer(
+        buffer: &mut QuadBuffer,
+        position: Point2<f32>,
+        size: Vector2<f32>,
+        color: Vector3<f32>,
+        texture_id: RenderId,
+    ) {
         let mut arr = Renderer::quad_as_vec(position, size, color);
 
         let thing_per_vertex = 7;
@@ -225,8 +263,13 @@ impl Renderer {
     }
 }
 
-fn render_buffer(buffer: &QuadBuffer, vbo_id: u32, shader_id: u32, vao_id: u32, window_size : (i32, i32)) {
-
+fn render_buffer(
+    buffer: &QuadBuffer,
+    vbo_id: u32,
+    shader_id: u32,
+    vao_id: u32,
+    window_size: (i32, i32),
+) {
     let out_color_str = CString::new("out_color").unwrap();
     let mvp_str = CString::new("mvp").unwrap();
 
@@ -242,7 +285,14 @@ fn render_buffer(buffer: &QuadBuffer, vbo_id: u32, shader_id: u32, vao_id: u32, 
             gl::DYNAMIC_DRAW,
         );
 
-        let mvp = math::array4x4(math::ortho(0.0, window_size.0 as f32, window_size.1 as f32, 0.0, 0.0, 1.0));
+        let mvp = math::array4x4(math::ortho(
+            0.0,
+            window_size.0 as f32,
+            window_size.1 as f32,
+            0.0,
+            0.0,
+            1.0,
+        ));
 
         let mvp_attr = gl::GetUniformLocation(shader_id, mvp_str.as_ptr());
         gl::UniformMatrix4fv(mvp_attr, 1, gl::FALSE, mvp.as_ptr() as *const f32);
@@ -255,4 +305,3 @@ fn render_buffer(buffer: &QuadBuffer, vbo_id: u32, shader_id: u32, vao_id: u32, 
         }
     }
 }
-

@@ -3,12 +3,9 @@ extern crate glfw;
 pub use self::glfw::WindowEvent;
 use platform::{MouseButtonState, WindowSize};
 
-use ecs::{System, SystemData, Write, World};
+use ecs::{System, SystemData, World, Write};
 
-use self::glfw::{
-    Window,
-    Context,
-};
+use self::glfw::{Context, Window};
 
 pub struct WindowSystem {
     window: Window,
@@ -21,11 +18,10 @@ impl WindowSystem {
 }
 
 impl<'a> System<'a> for WindowSystem {
-    type SystemData =
-        (Write<'a, MouseButtonState>,
-        Write<'a, WindowSize>);
+    type SystemData = (Write<'a, MouseButtonState>, Write<'a, WindowSize>);
 
     fn run(&mut self, (mut mbs, mut window_size): Self::SystemData) {
+        log::trace!("Running WindowSystem");
         self.window.glfw.poll_events();
 
         let (width, height) = self.window.get_framebuffer_size();
@@ -39,7 +35,6 @@ impl<'a> System<'a> for WindowSystem {
 
         self.window.swap_buffers();
     }
-
 
     fn setup(&mut self, world: &mut World) {
         Self::SystemData::setup(world);
@@ -60,7 +55,6 @@ impl<'a> System<'a> for WindowSystem {
         }
 
         window.make_current();
-        window.glfw.set_swap_interval(glfw::SwapInterval::Sync(0));
+        window.glfw.set_swap_interval(glfw::SwapInterval::Sync(1));
     }
 }
-
