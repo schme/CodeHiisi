@@ -47,7 +47,7 @@ impl fmt::Debug for MouseButtonState {
 
 pub fn init_window(title: &str, window_size: (u32, u32)) -> (WindowSystem, PlatformEventSystem) {
 
-    // FIXME: This doesn't belong here, but kinda just needs to be somewhere
+    // FIXME: This doesn't belong here, but kinda just needs to be somewhere right now
     file::image::setup();
 
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();

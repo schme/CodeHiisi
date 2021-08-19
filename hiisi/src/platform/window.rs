@@ -12,7 +12,22 @@ pub struct WindowSystem {
 }
 
 impl WindowSystem {
-    pub fn new(window: Window) -> Self {
+    pub fn new(mut window: Window) -> Self {
+
+        window.set_key_polling(true);
+        window.set_close_polling(true);
+        window.set_size_polling(true);
+        window.set_mouse_button_polling(true);
+        window.set_cursor_pos_polling(true);
+        window.set_framebuffer_size_polling(true);
+
+        {
+            use renderer;
+            renderer::get_proc_address(&mut window);
+        }
+
+        window.make_current();
+        window.glfw.set_swap_interval(glfw::SwapInterval::Sync(1));
         WindowSystem { window }
     }
 }
@@ -33,28 +48,17 @@ impl<'a> System<'a> for WindowSystem {
             middle: self.window.get_mouse_button(glfw::MouseButtonMiddle),
         };
 
-        self.window.swap_buffers();
+        {
+            use std::time::Instant;
+            let swap_timer = Instant::now();
+
+            self.window.swap_buffers();
+            log::trace!("Time spent waiting swap: {:?}", swap_timer.elapsed());
+        }
     }
 
     fn setup(&mut self, world: &mut World) {
         Self::SystemData::setup(world);
-        log::debug!("Setting up: WindowSystem");
 
-        let window = &mut self.window;
-
-        window.set_key_polling(true);
-        window.set_close_polling(true);
-        window.set_size_polling(true);
-        window.set_mouse_button_polling(true);
-        window.set_cursor_pos_polling(true);
-        window.set_framebuffer_size_polling(true);
-
-        {
-            use renderer;
-            renderer::get_proc_address(window);
-        }
-
-        window.make_current();
-        window.glfw.set_swap_interval(glfw::SwapInterval::Sync(1));
     }
 }

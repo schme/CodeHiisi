@@ -2,11 +2,34 @@ use hiisi::{
     components::*,
     ecs::{Join, ReadStorage, WriteStorage},
     math::*,
-    platform::{events::Action, MouseButtonState},
+    platform::{events::Action, MouseButtonState, DeltaTime},
     prelude::*,
 };
 
 use crate::components::*;
+
+pub struct UpdatePosition;
+impl<'a> System<'a> for UpdatePosition {
+    type SystemData = (
+        Read<'a, DeltaTime>,
+        WriteStorage<'a, Position>,
+        ReadStorage<'a, Velocity>,
+    );
+
+    fn run(&mut self, (delta, mut pos, vel): Self::SystemData) {
+        use hiisi::ecs::parallel::prelude::*;
+        use hiisi::ecs::ParJoin;
+
+        log::trace!("Running UpdatePosition");
+
+        let dt = delta.0;
+
+        (&mut pos, &vel).par_join().for_each(|(pos, vel)| {
+            pos.0 += vel.0 * dt;
+        });
+    }
+}
+
 
 pub struct FollowMouse;
 impl<'a> System<'a> for FollowMouse {

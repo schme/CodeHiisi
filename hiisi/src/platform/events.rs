@@ -49,7 +49,5 @@ impl<'a> System<'a> for PlatformEventSystem {
 
     fn setup(&mut self, world: &mut World) {
         Self::SystemData::setup(world);
-
-        log::debug!("Setting up: PlatformEventSystem");
     }
 }

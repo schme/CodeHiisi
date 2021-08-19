@@ -12,22 +12,22 @@ use hiisi::{
     app::{App, AppConfig},
     components::*,
     ecs::{World, WorldExt},
-    game::UpdatePosition,
     math::*,
     prelude::*,
     renderer::components::*,
 };
 
+
 use {components::*, systems::*};
+
 
 fn setup_logging() {
     use simplelog::{
         ColorChoice, CombinedLogger, ConfigBuilder, LevelFilter, TermLogger, TerminalMode,
-        ThreadLogMode, WriteLogger,
+        WriteLogger,
     };
 
     let config = ConfigBuilder::new()
-        .set_thread_mode(ThreadLogMode::Names)
         .set_time_to_local(true)
         .build();
 
@@ -46,6 +46,7 @@ fn setup_logging() {
     ])
     .unwrap();
 }
+
 
 fn main() -> std::io::Result<()> {
     setup_logging();
@@ -78,7 +79,7 @@ fn main() -> std::io::Result<()> {
         .build();
 
     let mut rng = rand::thread_rng();
-    for _ in 1..10_000 {
+    for _ in 1..1_000 {
         let pos = Position(Point2::new(
             rng.gen_range(0.0..800.0),
             rng.gen_range(0.0..800.0),

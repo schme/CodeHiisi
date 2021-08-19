@@ -2,13 +2,10 @@ extern crate rand;
 
 use std::{
     error::Error,
-    path::Path,
 };
 
 use crate::{
     ecs::{World, System, RunNow, DispatcherBuilder, Plugin},
-    assets::{TextureAssets},
-    utils,
 };
 
 use platform::systems::PlatformRunner;
@@ -57,7 +54,7 @@ impl<'a, 'b> AppBuilder<'a, 'b> {
         self
     }
 
-    pub fn with_plugin<T>(mut self, world: &mut World, mut plugin: T) -> Self
+    pub fn with_plugin<T>(mut self, world: &mut World, plugin: T) -> Self
         where
             T: Plugin,
     {
@@ -86,12 +83,7 @@ impl<'a, 'b> App<'a, 'b> {
         }
     }
 
-    pub fn run(mut self) -> Result<(), Box<dyn Error>> {
-
-        let asset_path = utils::get_asset_path()?;
-        let texture_path = Path::new(&asset_path).join("textures");
-        let textures = TextureAssets::new(String::from(texture_path.to_str().expect("Could not parse texture directory")));
-        self.world.insert(textures);
+    pub fn run(self) -> Result<(), Box<dyn Error>> {
 
         PlatformRunner::new(self.config)
             .run_loop(self.world, self.dispatcher_builder)?;

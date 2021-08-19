@@ -34,10 +34,11 @@ impl<'a> System<'a> for Timer {
             self.prev_instant = Some(self.start_time);
         }
 
-        delta.0 = self.prev_instant.unwrap().elapsed().as_secs_f32();
+        let elapsed = self.prev_instant.unwrap().elapsed();
+        delta.0 = elapsed.as_secs_f32();
         self.prev_instant = Some(Instant::now());
 
-        log::trace!("{}", delta.0);
+        log::trace!("{:?}", elapsed);
     }
 }
 
@@ -53,11 +54,13 @@ impl PlatformRunner {
         mut world: World,
         dispatcher_builder: DispatcherBuilder,
     ) -> Result<(), Box<dyn Error>> {
+
         let mut dispatcher = dispatcher_builder.build();
         dispatcher.setup(&mut world);
 
         loop {
             log::trace!("Top of loop");
+
             dispatcher.dispatch(&world);
             world.maintain();
 
