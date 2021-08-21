@@ -10,7 +10,7 @@ pub use self::window::WindowSystem;
 pub use self::systems::DeltaTime;
 
 pub use self::glfw::{RenderContext, Context};
-pub use self::glfw::Action;
+pub use self::events::{Action, Key, MouseButton};
 
 
 pub fn init_window(title: &str, window_size: (u32, u32)) -> (WindowSystem, PlatformEventSystem) {

@@ -13,6 +13,7 @@ use plugin::Plugin;
 pub struct AppConfig {
     pub name: String,
     pub window_size: (u32, u32),
+    pub input_map: String,
 }
 
 impl Default for AppConfig {
@@ -20,6 +21,7 @@ impl Default for AppConfig {
         AppConfig {
             name: "Hiisi Engine".to_string(),
             window_size: (800, 600),
+            input_map: "input_map.ron".to_string(),
         }
     }
 }

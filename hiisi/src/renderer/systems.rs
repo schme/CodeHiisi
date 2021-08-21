@@ -34,7 +34,6 @@ impl<'a> System<'a> for RenderSystem {
     );
 
     fn run(&mut self, (mut quads, window_size): Self::SystemData) {
-        log::trace!("Running RenderSystem");
         self.renderer.render_quad_buffer(
             &mut *quads,
             self.vbo_id,
@@ -60,7 +59,6 @@ impl<'a> System<'a> for SpriteSystem {
     );
 
     fn run(&mut self, (poss, sizes, txtrs, cols, textures, mut buffer): Self::SystemData) {
-        log::trace!("Running SpriteSystem");
         use ecs::Join;
         for (pos, size, txtr, col) in (&poss, &sizes, &txtrs, &cols).join() {
             Renderer::add_quad_to_buffer(

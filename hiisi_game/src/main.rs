@@ -53,6 +53,7 @@ fn main() -> std::io::Result<()> {
     let config = AppConfig {
         name: "Hiisi Game".to_string(),
         window_size: (800, 800),
+        input_map: "input_map.ron".to_string(),
     };
 
     log::info!("Starting {}", &config.name);
@@ -115,7 +116,7 @@ fn main() -> std::io::Result<()> {
         .build(world);
 
     if let Err(e) = app.run() {
-        println!("Application error: {}", e);
+        log::error!("Application error: {}", e);
         process::exit(1);
     };
 

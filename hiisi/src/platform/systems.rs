@@ -37,8 +37,6 @@ impl<'a> System<'a> for Timer {
         let elapsed = self.prev_instant.unwrap().elapsed();
         delta.0 = elapsed.as_secs_f32();
         self.prev_instant = Some(Instant::now());
-
-        log::trace!("{:?}", elapsed);
     }
 }
 
@@ -59,15 +57,12 @@ impl PlatformRunner {
         dispatcher.setup(&mut world);
 
         loop {
-            log::trace!("Top of loop");
-
             dispatcher.dispatch(&world);
             world.maintain();
 
             if world.read_resource::<ShouldQuit>().0 {
                 break;
             }
-            log::trace!("Bottom of loop");
         }
 
         Ok(())

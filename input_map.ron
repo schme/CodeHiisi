@@ -1,0 +1,7 @@
+[
+    InputAction(
+        name: "MouseLeft",
+        key: MouseButton(Button1),
+        value: Press,
+    )
+]

@@ -1,6 +1,8 @@
 extern crate glfw;
 
-pub use self::glfw::Key;
+mod systems;
+
+pub use self::systems::{InputSystem, GameAction, InputAction};
 
 pub mod pointer {
     use platform::Action;
