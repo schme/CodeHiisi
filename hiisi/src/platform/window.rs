@@ -1,11 +1,16 @@
 extern crate glfw;
 
 pub use self::glfw::WindowEvent;
-use platform::{MouseButtonState, WindowSize};
+
+use input::pointer::MouseButtonState;
 
 use ecs::{System, SystemData, World, Write};
 
 use self::glfw::{Context, Window};
+
+#[derive(Default)]
+pub struct WindowSize(pub i32, pub i32);
+
 
 pub struct WindowSystem {
     window: Window,

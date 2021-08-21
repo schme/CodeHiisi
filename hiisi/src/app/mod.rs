@@ -4,11 +4,9 @@ use std::{
     error::Error,
 };
 
-use crate::{
-    ecs::{World, System, RunNow, DispatcherBuilder, Plugin},
-};
-
 use platform::systems::PlatformRunner;
+use ecs::{World, System, RunNow, DispatcherBuilder};
+use plugin::Plugin;
 
 
 #[derive(Debug)]

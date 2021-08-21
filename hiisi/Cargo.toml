@@ -11,8 +11,10 @@ glfw = "*"
 gl = "*"
 stb_image = "*"
 specs = { version = "*", features = ["shred-derive"] }
-cgmath = { version = "*", features = ["swizzle"] }
+nalgebra-glm = { version = "*" }
+parry2d = "*"
 log = "*"
+ron = "*"
 
 
 # No idea what's going on here. 

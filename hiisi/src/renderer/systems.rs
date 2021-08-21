@@ -2,7 +2,7 @@ use crate::{
     assets::TextureAssets,
     components::*,
     ecs::{Read, ReadExpect, ReadStorage, System, SystemData, World, Write},
-    platform::WindowSize,
+    platform::window::WindowSize,
 };
 
 pub use super::{components::*, QuadBuffer, RenderBatch, Renderer};
@@ -67,7 +67,7 @@ impl<'a> System<'a> for SpriteSystem {
                 &mut buffer,
                 pos.0,
                 size.0,
-                col.0,
+                *col,
                 textures
                     .get_render_id(
                         textures

@@ -12,7 +12,6 @@ use hiisi::{
     app::{App, AppConfig},
     components::*,
     ecs::{World, WorldExt},
-    math::*,
     prelude::*,
     renderer::components::*,
 };
@@ -72,28 +71,28 @@ fn main() -> std::io::Result<()> {
 
     world
         .create_entity()
-        .with(Position(Point2::new(100.0, 100.0)))
-        .with(Size(Vector2::new(200.0, 200.0)))
+        .with(Position::new(100.0, 100.0))
+        .with(Size::new(200.0, 200.0))
         .with(Texture("kivi.png".to_string()))
-        .with(Color(Vector3::new(1.0, 1.0, 1.0)))
+        .with(Color(1.0, 1.0, 1.0))
         .build();
 
     let mut rng = rand::thread_rng();
     for _ in 1..1_000 {
-        let pos = Position(Point2::new(
+        let pos = Position::new(
             rng.gen_range(0.0..800.0),
             rng.gen_range(0.0..800.0),
-        ));
-        let vel = Velocity(Vector2::new(
+        );
+        let vel = Velocity::new(
             rng.gen_range(-10.0..10.0),
             rng.gen_range(-10.0..10.0),
-        ));
-        let color = Color(Vector3::new(
+        );
+        let color = Color(
             rng.gen_range(0.0..1.0),
             rng.gen_range(0.0..1.0),
             rng.gen_range(0.0..1.0),
-        ));
-        let size = Size(Vector2::new(20.0, 40.0));
+        );
+        let size = Size::new(20.0, 40.0);
         let texture = Texture("auringonkukka.png".to_string());
         world
             .create_entity()

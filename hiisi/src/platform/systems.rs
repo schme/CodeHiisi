@@ -4,7 +4,7 @@ use std::time::Instant;
 use app::AppConfig;
 use ecs::{DispatcherBuilder, System, World, WorldExt, Write};
 
-pub use crate::platform::MouseButtonState;
+pub use input::pointer::MouseButtonState;
 
 #[derive(Default)]
 pub struct ShouldQuit(pub bool);

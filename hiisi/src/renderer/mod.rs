@@ -9,10 +9,10 @@ use std::{ffi::CString, mem, ptr};
 
 use {
     assets::RenderId,
-    math::{self, Point2, Vector2, Vector3},
+    math::{self, Vec2},
 };
 
-use self::{gl::types::*, opengl::*};
+use self::{components::Color, gl::types::*, opengl::*};
 
 pub use self::{
     opengl::{get_proc_address, resize_viewport},
@@ -184,48 +184,48 @@ impl Renderer {
         buff.quads.batch_data.push(batch_info);
     }
 
-    pub fn quad_as_vec(position: Point2<f32>, size: Vector2<f32>, color: Vector3<f32>) -> Vec<f32> {
+    pub fn quad_as_vec(position: Vec2, size: Vec2, color: Color) -> Vec<f32> {
         vec![
             position.x,
             position.y,
-            color.x,
-            color.y,
-            color.z,
+            color.0,
+            color.1,
+            color.2,
             0.0,
             1.0,
             position.x,
             position.y + size.y,
-            color.x,
-            color.y,
-            color.z,
+            color.0,
+            color.1,
+            color.2,
             0.0,
             0.0,
             position.x + size.x,
             position.y,
-            color.x,
-            color.y,
-            color.z,
+            color.0,
+            color.1,
+            color.2,
             1.0,
             1.0,
             position.x,
             position.y + size.y,
-            color.x,
-            color.y,
-            color.z,
+            color.0,
+            color.1,
+            color.2,
             0.0,
             0.0,
             position.x + size.x,
             position.y + size.y,
-            color.x,
-            color.y,
-            color.z,
+            color.0,
+            color.1,
+            color.2,
             1.0,
             0.0,
             position.x + size.x,
             position.y,
-            color.x,
-            color.y,
-            color.z,
+            color.0,
+            color.1,
+            color.2,
             1.0,
             1.0,
         ]
@@ -233,9 +233,9 @@ impl Renderer {
 
     pub fn add_quad(
         &mut self,
-        position: Point2<f32>,
-        size: Vector2<f32>,
-        color: Vector3<f32>,
+        position: Vec2,
+        size: Vec2,
+        color: Color,
         texture_id: u32,
     ) {
         let mut v = Renderer::quad_as_vec(position, size, color);
@@ -244,9 +244,9 @@ impl Renderer {
 
     pub fn add_quad_to_buffer(
         buffer: &mut QuadBuffer,
-        position: Point2<f32>,
-        size: Vector2<f32>,
-        color: Vector3<f32>,
+        position: Vec2,
+        size: Vec2,
+        color: Color,
         texture_id: RenderId,
     ) {
         let mut arr = Renderer::quad_as_vec(position, size, color);
@@ -285,14 +285,14 @@ fn render_buffer(
             gl::DYNAMIC_DRAW,
         );
 
-        let mvp = math::array4x4(math::ortho(
+        let mvp = math::ortho(
             0.0,
             window_size.0 as f32,
             window_size.1 as f32,
             0.0,
             0.0,
             1.0,
-        ));
+        );
 
         let mvp_attr = gl::GetUniformLocation(shader_id, mvp_str.as_ptr());
         gl::UniformMatrix4fv(mvp_attr, 1, gl::FALSE, mvp.as_ptr() as *const f32);

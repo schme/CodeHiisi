@@ -1,8 +1,9 @@
 use hiisi::{
+    math,
     components::*,
     ecs::{Join, ReadStorage, WriteStorage},
-    math::*,
-    platform::{events::Action, MouseButtonState, DeltaTime},
+    platform::{events::Action, DeltaTime},
+    input::pointer::MouseButtonState,
     prelude::*,
 };
 
@@ -66,11 +67,11 @@ impl<'a> System<'a> for Repelled {
             let lmb = mouse_state.left;
 
             if lmb == Action::Press {
-                if pos.0.distance2(cursor_pos.0) < attract_radius2 {
+                if math::distance2(&pos.0, &cursor_pos.0) < attract_radius2 {
                     vel.0 = -dir / 5.0;
                 }
             } else if lmb == Action::Release {
-                if pos.0.distance2(cursor_pos.0) < repel_radius2 {
+                if math::distance2(&pos.0, &cursor_pos.0) < repel_radius2 {
                     vel.0 += dir;
                 }
             }
