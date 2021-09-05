@@ -1,13 +1,43 @@
 extern crate glfw;
-
 mod systems;
 
+pub use self::systems::InputSystem;
+
 use serde::Deserialize;
-pub use self::systems::{InputSystem, GameAction, InputAction};
+use platform::events::{Action, KeyEvent, InputKey};
+
+#[derive(Debug, Deserialize, Clone, Copy)]
+pub enum ActionValue {
+    Trigger,
+    Value(f32),
+}
 
 #[derive(Debug, Deserialize)]
 pub struct InputMapping {
+    action: InputAction,
+    value: ActionValue,
+}
 
+#[derive(Debug, Deserialize)]
+pub struct InputAction {
+    name: String,
+    key: InputKey,
+    action: Action,
+}
+
+pub struct GameAction {
+    pub name: String,
+    pub value: ActionValue,
+}
+
+impl InputMapping {
+    pub fn get_action(&self, key: &KeyEvent) -> Option<GameAction> {
+        let action = &self.action;
+        if action.key == key.key && action.action == key.action {
+            return Some( GameAction { name: action.name.clone(), value: self.value });
+        }
+        None
+    }
 }
 
 

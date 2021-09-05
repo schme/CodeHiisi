@@ -2,7 +2,7 @@ use crate::{
     plugin::Plugin,
     ecs::{Component, System, SystemData, Entities, Read, ReadStorage, WriteStorage, HashMapStorage, World, WorldExt, Join, DispatcherBuilder},
     ecs::events::{EventChannel, ReaderId},
-    input::{GameAction},
+    input::{GameAction, ActionValue},
     components::{Position, Velocity},
     math::{Vec2, vec2},
     app::AppConfig,
@@ -25,11 +25,12 @@ impl Component for PlayerController {
 
 pub struct PlayerControlSystem {
     reader: Option<ReaderId<GameAction>>,
+    dir_vec: Vec2,
 }
 
 impl PlayerControlSystem {
     pub fn new() -> Self {
-        Self { reader: None }
+        Self { reader: None, dir_vec: vec2(0.0, 0.0) }
     }
 }
 
@@ -42,27 +43,43 @@ impl<'a> System<'a> for PlayerControlSystem {
     );
 
     fn run(&mut self, (entities, event_channel, pcs, mut vel) : Self::SystemData) {
-        let events : Vec<_> = event_channel.read(&mut self.reader.as_mut().unwrap()).collect();
+        let events: Vec<_> = event_channel.read(&mut self.reader.as_mut().unwrap()).collect();
         if events.is_empty() {
             return;
         }
 
         for (entity, pc) in (&*entities, &pcs).join() {
-            // XXX: Since this is an iterator, we probably can handle only one player_controller
-            // like this. Copy the events and the run the entities to fix.
             let mut direction_vec = vec2(0.0, 0.0);
+            let mut changed = false;
             for event in &events {
-                let dir = match event.name.as_str() {
-                    "Left" => vec2(-1.0, 0.0),
-                    "Right" => vec2(1.0, 0.0),
-                    "Up" => vec2(0.0, 1.0),
-                    "Down" => vec2(0.0, -1.0),
-                    _ => vec2(0.0, 0.0),
+                if let ActionValue::Value(val) = event.value {
+                    let dir = match event.name.as_str() {
+                        "Up" => {
+                            changed = true;
+                            vec2(0.0, val)
+                        },
+                        "Right" => {
+                            changed = true;
+                            vec2(val, 0.0)
+                        },
+                        _ => vec2(0.0, 0.0)
+                    };
+                    direction_vec += dir;
                 };
-                direction_vec += dir;
             }
-            direction_vec = direction_vec.normalize();
-            *vel.get_mut(entity).unwrap() = Velocity(direction_vec * pc.speed);
+            if changed {
+                // TODO: check if nalgebra does this the right way behind the scenes or if this is just
+                // dumb
+                if direction_vec != vec2(0.0, 0.0) {
+                    direction_vec = direction_vec.normalize();
+                    self.dir_vec = direction_vec;
+                } else {
+                    self.dir_vec = vec2(0.0, 0.0);
+                }
+                log::debug!("direction changed: {}", self.dir_vec);
+            }
+
+            *vel.get_mut(entity).unwrap() = Velocity(self.dir_vec * pc.speed);
         }
 
     }

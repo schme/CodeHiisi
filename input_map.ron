@@ -1,39 +1,91 @@
 [
     (
-        name: "MouseLeft",
-        key: MouseButton(Button1),
-        value: Press,
+        action: (
+            name: "MouseLeft",
+            key: MouseButton(Button1),
+            action: Press,
+        ),
+        value: Trigger,
     ),
     (
-        name: "MouseRight",
-        key: MouseButton(Button2),
-        value: Press,
+        action: (
+            name: "MouseRight",
+            key: MouseButton(Button2),
+            action: Press,
+        ),
+        value: Trigger,
+    ),
+    (
+        action: (
+            name: "Up",
+            key: Key(W),
+            action: Press,
+        ),
+        value: Value(-1.0),
+    ),
+    (
+        action: (
+            name: "Up",
+            key: Key(S),
+            action: Press,
+        ),
+        value: Value(1.0),
+    ),
+    (
+        action: (
+            name: "Up",
+            key: Key(S),
+            action: Release,
+        ),
+        value: Value(0.0),
+    ),
+    (
+        action: (
+            name: "Up",
+            key: Key(W),
+            action: Release,
+        ),
+        value: Value(0.0),
+    ),
+    (
+        action: (
+            name: "Right",
+            key: Key(A),
+            action: Press,
+        ),
+        value: Value(-1.0),
+    ),
+    (
+        action: (
+            name: "Right",
+            key: Key(D),
+            action: Press,
+        ),
+        value: Value(1.0),
+    ),
+    (
+        action: (
+            name: "Right",
+            key: Key(A),
+            action: Release,
+        ),
+        value: Value(0.0),
+    ),
+    (
+        action: (
+            name: "Right",
+            key: Key(D),
+            action: Release,
+        ),
+        value: Value(0.0),
     ),
 
     (
-        name: "Up",
-        key: Key(W),
-        value: Press,
-    ),
-    (
-        name: "Left",
-        key: Key(A),
-        value: Press,
-    ),
-    (
-        name: "Down",
-        key: Key(S),
-        value: Press,
-    ),
-    (
-        name: "Right",
-        key: Key(D),
-        value: Press,
-    ),
-
-    (
-        name: "Escape",
-        key: Key(Escape),
-        value: Press,
+        action: (
+            name: "Escape",
+            key: Key(Escape),
+            action: Press,
+        ),
+        value: Trigger,
     ),
 ]
