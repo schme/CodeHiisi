@@ -9,12 +9,16 @@ use {
 use std::path::Path;
 use platform::{events::PlatformEventSystem, window::WindowSystem, systems::Timer};
 use input::InputSystem;
+use control::{PlayerControlPlugin};
 
 
 
 pub trait Plugin {
     type Config;
     fn new(config: &Self::Config) -> Self;
+    // XXX: config should be &Self::Config. No idea how to make the app call this generically in
+    // that case. Maybe it can't, unless the load function is generic and the caller is responsible
+    // for the specifics?
     fn load(self, world: &mut World, dispatcher: &mut DispatcherBuilder, config: &AppConfig);
 }
 
@@ -48,7 +52,7 @@ impl Plugin for WindowPlugin {
 pub struct RenderPlugin;
 
 impl Plugin for RenderPlugin {
-    type Config = ();
+    type Config = AppConfig;
 
     fn new(_config: &Self::Config) -> Self {
         Self
@@ -78,7 +82,7 @@ impl Plugin for RenderPlugin {
 pub struct CorePlugin;
 
 impl Plugin for CorePlugin {
-    type Config = ();
+    type Config = AppConfig;
 
     fn new(_config: &Self::Config) -> Self {
         Self
@@ -99,6 +103,7 @@ impl Plugin for CorePlugin {
 
         dispatcher.add(input_system, "input_system", &[]);
 
+        PlayerControlPlugin.load(world, dispatcher, &config);
         {
             let asset_path = utils::get_asset_path().unwrap();
             let texture_path = Path::new(&asset_path).join("textures");

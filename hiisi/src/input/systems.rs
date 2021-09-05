@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use platform::events::{Action, Key, KeyEvent, Modifiers, InputKey};
+use platform::events::{Action, KeyEvent, InputKey};
 use ecs::{
     Read, Write, System, SystemData, World,
     events::{
@@ -19,7 +19,7 @@ pub struct InputAction {
 }
 
 pub struct GameAction {
-    name: String,
+    pub name: String,
 }
 
 impl InputAction {

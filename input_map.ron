@@ -1,7 +1,39 @@
 [
-    InputAction(
+    (
         name: "MouseLeft",
         key: MouseButton(Button1),
         value: Press,
-    )
+    ),
+    (
+        name: "MouseRight",
+        key: MouseButton(Button2),
+        value: Press,
+    ),
+
+    (
+        name: "Up",
+        key: Key(W),
+        value: Press,
+    ),
+    (
+        name: "Left",
+        key: Key(A),
+        value: Press,
+    ),
+    (
+        name: "Down",
+        key: Key(S),
+        value: Press,
+    ),
+    (
+        name: "Right",
+        key: Key(D),
+        value: Press,
+    ),
+
+    (
+        name: "Escape",
+        key: Key(Escape),
+        value: Press,
+    ),
 ]

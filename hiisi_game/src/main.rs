@@ -11,6 +11,7 @@ use rand::Rng;
 use hiisi::{
     app::{App, AppConfig},
     components::*,
+    control::*,
     ecs::{World, WorldExt},
     prelude::*,
     renderer::components::*,
@@ -68,6 +69,7 @@ fn main() -> std::io::Result<()> {
         world.register::<Size>();
         world.register::<Texture>();
         world.register::<Color>();
+        world.register::<PlayerController>();
     }
 
     world
@@ -76,6 +78,16 @@ fn main() -> std::io::Result<()> {
         .with(Size::new(200.0, 200.0))
         .with(Texture("kivi.png".to_string()))
         .with(Color(1.0, 1.0, 1.0))
+        .build();
+
+    world
+        .create_entity()
+        .with(PlayerController::new())
+        .with(Position::new(300.0, 300.0))
+        .with(Velocity::new(0.0, 0.0))
+        .with(Size::new(100.0, 200.0))
+        .with(Texture("white.png".to_string()))
+        .with(Color(0.0, 1.0, 1.0))
         .build();
 
     let mut rng = rand::thread_rng();

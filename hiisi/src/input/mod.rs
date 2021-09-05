@@ -2,7 +2,14 @@ extern crate glfw;
 
 mod systems;
 
+use serde::Deserialize;
 pub use self::systems::{InputSystem, GameAction, InputAction};
+
+#[derive(Debug, Deserialize)]
+pub struct InputMapping {
+
+}
+
 
 pub mod pointer {
     use platform::Action;
