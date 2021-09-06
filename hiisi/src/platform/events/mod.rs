@@ -99,7 +99,6 @@ impl<'a> System<'a> for PlatformEventSystem {
             match event {
                 WindowEvent::Key(key, _, action, modifiers) => {
                     ke.single_write(KeyEvent::from_platform_key(key, action, modifiers));
-                    log::debug!("{:?}, {:?} with modifiers: {:?}", key, action, modifiers);
 
                     // TODO: Move this 
                     if key == PlatformKey::Escape && action == PlatformAction::Press {
@@ -108,7 +107,6 @@ impl<'a> System<'a> for PlatformEventSystem {
                 }
                 WindowEvent::MouseButton(button, action, modifiers) => {
                     ke.single_write(KeyEvent::from_platform_button(button, action, modifiers));
-                    log::debug!("{:?}, {:?} with modifiers: {:?}", button, action, modifiers);
                 }
                 WindowEvent::Close => {
                     (*quit).0 = true;

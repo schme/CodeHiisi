@@ -44,7 +44,6 @@ impl<'a> System<'a> for InputSystem {
         for event in event_channel.read(&mut self.reader.as_mut().unwrap()) {
             for mapped in &self.mapping {
                 if let Some(action) = mapped.get_action(event) {
-                    log::debug!("Action sent: {}", &action.name);
                     action_channel.single_write(action);
                 }
             }

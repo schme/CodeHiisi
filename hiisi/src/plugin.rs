@@ -9,8 +9,6 @@ use {
 use std::path::Path;
 use platform::{events::PlatformEventSystem, window::WindowSystem, systems::Timer};
 use input::InputSystem;
-use control::{PlayerControlPlugin};
-
 
 
 pub trait Plugin {
@@ -102,8 +100,6 @@ impl Plugin for CorePlugin {
         let input_system = InputSystem::from_file(&config.input_map);
 
         dispatcher.add(input_system, "input_system", &[]);
-
-        PlayerControlPlugin.load(world, dispatcher, &config);
         {
             let asset_path = utils::get_asset_path().unwrap();
             let texture_path = Path::new(&asset_path).join("textures");

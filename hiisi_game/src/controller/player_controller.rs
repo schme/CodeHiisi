@@ -1,21 +1,26 @@
-use crate::{
+use hiisi::{
     plugin::Plugin,
     ecs::{Component, System, SystemData, Entities, Read, ReadStorage, WriteStorage, HashMapStorage, World, WorldExt, Join, DispatcherBuilder},
     ecs::events::{EventChannel, ReaderId},
     input::{GameAction, ActionValue},
     components::{Position, Velocity},
-    math::{Vec2, vec2},
+    math::{self, Vec2, vec2},
     app::AppConfig,
 };
 
 #[derive(Default)]
 pub struct PlayerController {
     pub speed: f32,
+    pub up_vec: Vec2,
+    pub right_vec: Vec2,
 }
 
 impl PlayerController {
     pub fn new() -> Self {
-        Self {speed: 10.0}
+        Self {speed: 10.0, up_vec: vec2(0.0, 0.0), right_vec: vec2(0.0, 0.0)}
+    }
+    pub fn with_speed(speed :f32) -> Self {
+        Self {speed, up_vec: vec2(0.0, 0.0), right_vec: vec2(0.0, 0.0) }
     }
 }
 
@@ -25,12 +30,11 @@ impl Component for PlayerController {
 
 pub struct PlayerControlSystem {
     reader: Option<ReaderId<GameAction>>,
-    dir_vec: Vec2,
 }
 
 impl PlayerControlSystem {
     pub fn new() -> Self {
-        Self { reader: None, dir_vec: vec2(0.0, 0.0) }
+        Self { reader: None }
     }
 }
 
@@ -38,48 +42,35 @@ impl<'a> System<'a> for PlayerControlSystem {
     type SystemData = (
         Entities<'a>,
         Read<'a, EventChannel<GameAction>>,
-        ReadStorage<'a, PlayerController>,
+        WriteStorage<'a, PlayerController>,
         WriteStorage<'a, Velocity>,
     );
 
-    fn run(&mut self, (entities, event_channel, pcs, mut vel) : Self::SystemData) {
+    fn run(&mut self, (entities, event_channel, mut pcs, mut vel) : Self::SystemData) {
         let events: Vec<_> = event_channel.read(&mut self.reader.as_mut().unwrap()).collect();
         if events.is_empty() {
             return;
         }
 
-        for (entity, pc) in (&*entities, &pcs).join() {
-            let mut direction_vec = vec2(0.0, 0.0);
-            let mut changed = false;
+        for (entity, pc) in (&*entities, &mut pcs).join() {
             for event in &events {
                 if let ActionValue::Value(val) = event.value {
-                    let dir = match event.name.as_str() {
-                        "Up" => {
-                            changed = true;
-                            vec2(0.0, val)
-                        },
-                        "Right" => {
-                            changed = true;
-                            vec2(val, 0.0)
-                        },
-                        _ => vec2(0.0, 0.0)
+                    match event.name.as_str() {
+                        "Up" => pc.up_vec = vec2(0.0, val),
+                        "Right" => pc.right_vec = vec2(val, 0.0),
+                        _ => (),
                     };
-                    direction_vec += dir;
                 };
             }
-            if changed {
-                // TODO: check if nalgebra does this the right way behind the scenes or if this is just
-                // dumb
-                if direction_vec != vec2(0.0, 0.0) {
-                    direction_vec = direction_vec.normalize();
-                    self.dir_vec = direction_vec;
-                } else {
-                    self.dir_vec = vec2(0.0, 0.0);
-                }
-                log::debug!("direction changed: {}", self.dir_vec);
-            }
 
-            *vel.get_mut(entity).unwrap() = Velocity(self.dir_vec * pc.speed);
+            let mut dir_vec = pc.up_vec + pc.right_vec;
+            if math::all(&math::equal_eps(&dir_vec, &vec2(0.0, 0.0), f32::EPSILON)) {
+                dir_vec = vec2(0.0, 0.0);
+            }
+            else {
+                dir_vec = dir_vec.normalize();
+            }
+            *vel.get_mut(entity).unwrap() = Velocity(dir_vec * pc.speed);
         }
 
     }

@@ -3,6 +3,7 @@ extern crate rand;
 
 pub mod components;
 pub mod systems;
+mod controller;
 
 use std::{fs::File, process};
 
@@ -11,14 +12,16 @@ use rand::Rng;
 use hiisi::{
     app::{App, AppConfig},
     components::*,
-    control::*,
     ecs::{World, WorldExt},
     prelude::*,
     renderer::components::*,
 };
 
-
-use {components::*, systems::*};
+use {
+    components::*,
+    systems::*,
+    controller::*,
+};
 
 
 fn setup_logging() {
@@ -82,10 +85,10 @@ fn main() -> std::io::Result<()> {
 
     world
         .create_entity()
-        .with(PlayerController::new())
+        .with(PlayerController::with_speed(100.0))
         .with(Position::new(300.0, 300.0))
         .with(Velocity::new(0.0, 0.0))
-        .with(Size::new(100.0, 200.0))
+        .with(Size::new(32.0, 48.0))
         .with(Texture("white.png".to_string()))
         .with(Color(0.0, 1.0, 1.0))
         .build();
@@ -118,12 +121,11 @@ fn main() -> std::io::Result<()> {
     }
     let app = App::builder(config)
         .with_plugin(&mut world, CorePlugin)
-        .with(FollowMouse, "following_mouse", &[])
-        .with(Repelled, "repelled", &[])
+        .with_plugin(&mut world, PlayerControlPlugin)
         .with(
             UpdatePosition,
             "update_position",
-            &["following_mouse", "repelled"],
+            &[],
         )
         .build(world);
 
