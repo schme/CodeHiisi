@@ -1,2 +1,0 @@
-#!/usr/bin/bash
-export RUST_BACKTRACE=1
