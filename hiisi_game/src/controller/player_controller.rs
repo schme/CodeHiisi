@@ -1,11 +1,14 @@
 use hiisi::{
-    plugin::Plugin,
-    ecs::{Component, System, SystemData, Entities, Read, ReadStorage, WriteStorage, HashMapStorage, World, WorldExt, Join, DispatcherBuilder},
-    ecs::events::{EventChannel, ReaderId},
-    input::{GameAction, ActionValue},
-    components::{Position, Velocity},
-    math::{self, Vec2, vec2},
     app::AppConfig,
+    components::Velocity,
+    ecs::events::{EventChannel, ReaderId},
+    ecs::{
+        Component, DispatcherBuilder, Entities, HashMapStorage, Join, Read, System, SystemData,
+        World, WorldExt, WriteStorage,
+    },
+    input::{ActionValue, GameAction},
+    math::{self, vec2, Vec2},
+    plugin::Plugin,
 };
 
 #[derive(Default)]
@@ -16,11 +19,12 @@ pub struct PlayerController {
 }
 
 impl PlayerController {
-    pub fn new() -> Self {
-        Self {speed: 10.0, up_vec: vec2(0.0, 0.0), right_vec: vec2(0.0, 0.0)}
-    }
-    pub fn with_speed(speed :f32) -> Self {
-        Self {speed, up_vec: vec2(0.0, 0.0), right_vec: vec2(0.0, 0.0) }
+    pub fn with_speed(speed: f32) -> Self {
+        Self {
+            speed,
+            up_vec: vec2(0.0, 0.0),
+            right_vec: vec2(0.0, 0.0),
+        }
     }
 }
 
@@ -46,8 +50,10 @@ impl<'a> System<'a> for PlayerControlSystem {
         WriteStorage<'a, Velocity>,
     );
 
-    fn run(&mut self, (entities, event_channel, mut pcs, mut vel) : Self::SystemData) {
-        let events: Vec<_> = event_channel.read(&mut self.reader.as_mut().unwrap()).collect();
+    fn run(&mut self, (entities, event_channel, mut pcs, mut vel): Self::SystemData) {
+        let events: Vec<_> = event_channel
+            .read(&mut self.reader.as_mut().unwrap())
+            .collect();
         if events.is_empty() {
             return;
         }
@@ -66,18 +72,20 @@ impl<'a> System<'a> for PlayerControlSystem {
             let mut dir_vec = pc.up_vec + pc.right_vec;
             if math::all(&math::equal_eps(&dir_vec, &vec2(0.0, 0.0), f32::EPSILON)) {
                 dir_vec = vec2(0.0, 0.0);
-            }
-            else {
+            } else {
                 dir_vec = dir_vec.normalize();
             }
             *vel.get_mut(entity).unwrap() = Velocity(dir_vec * pc.speed);
         }
-
     }
 
     fn setup(&mut self, world: &mut World) {
         Self::SystemData::setup(world);
-        self.reader = Some(world.fetch_mut::<EventChannel<GameAction>>().register_reader());
+        self.reader = Some(
+            world
+                .fetch_mut::<EventChannel<GameAction>>()
+                .register_reader(),
+        );
     }
 }
 

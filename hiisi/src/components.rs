@@ -4,10 +4,9 @@ use crate::{
 };
 
 #[derive(Debug)]
+#[derive(Component)]
+#[storage(VecStorage)]
 pub struct Position(pub Vec2);
-impl Component for Position {
-    type Storage = VecStorage<Self>;
-}
 
 impl Position {
     pub fn new(x: f32, y: f32) -> Self {
@@ -18,10 +17,9 @@ impl Position {
 }
 
 #[derive(Debug)]
+#[derive(Component)]
+#[storage(VecStorage)]
 pub struct Velocity(pub Vec2);
-impl Component for Velocity {
-    type Storage = VecStorage<Self>;
-}
 
 impl Velocity {
     pub fn new(x: f32, y: f32) -> Self {
@@ -32,10 +30,9 @@ impl Velocity {
 }
 
 #[derive(Debug)]
+#[derive(Component)]
+#[storage(VecStorage)]
 pub struct Size(pub Vec2);
-impl Component for Size {
-    type Storage = VecStorage<Self>;
-}
 
 impl Size {
     pub fn new(x: f32, y: f32) -> Self {

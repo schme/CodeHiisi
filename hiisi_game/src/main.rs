@@ -15,6 +15,7 @@ use hiisi::{
     ecs::{World, WorldExt},
     prelude::*,
     renderer::components::*,
+    collision::CollisionPlugin,
 };
 
 use {
@@ -94,7 +95,7 @@ fn main() -> std::io::Result<()> {
         .build();
 
     let mut rng = rand::thread_rng();
-    for _ in 1..1_000 {
+    for _ in 1..10_000 {
         let pos = Position::new(
             rng.gen_range(0.0..800.0),
             rng.gen_range(0.0..800.0),
@@ -122,9 +123,20 @@ fn main() -> std::io::Result<()> {
     let app = App::builder(config)
         .with_plugin(&mut world, CorePlugin)
         .with_plugin(&mut world, PlayerControlPlugin)
+        .with_plugin(&mut world, CollisionPlugin)
         .with(
             UpdatePosition,
             "update_position",
+            &[],
+        )
+        .with(
+            FollowMouse,
+            "follow mouse",
+            &[],
+        )
+        .with(
+            Repelled,
+            "repel mouse",
             &[],
         )
         .build(world);
