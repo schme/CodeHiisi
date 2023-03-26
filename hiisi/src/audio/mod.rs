@@ -156,13 +156,14 @@ pub mod systems {
 
         fn run(&mut self, _: Self::SystemData) {
             if !self.music_playing {
+                let bg_music = "background_music.wav";
                 let storage = self.engine.get_storage();
-                if let Some(id) = storage.get_id_by_name("BallGame.wav") {
+                if let Some(id) = storage.get_id_by_name(bg_music) {
                     self.engine.play_cue_by_id(*id);
                     self.music_playing = true;
                 }
                 else {
-                    println!("Couldn't find audio/BallGame.wav!");
+                    println!("Couldn't find {}", bg_music);
                 }
             }
         }
